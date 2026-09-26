@@ -1016,7 +1016,7 @@ Open **[http://localhost:3000](http://localhost:3000)** or **[https://career-age
 | `roadmap`| `<target>` | Generates study roadmaps in markdown formats | `node scripts/cli.js roadmap "staff engineer"` |
 | `pipeline scan` | `<token> <provider>` | Scans ATS job boards for open requisitions | `node scripts/cli.js pipeline scan stripe greenhouse` |
 | `pipeline match`| `<jd> <co> <role>` | Evaluates candidate fit and prints Blocks A-G report | `node scripts/cli.js pipeline match jd.txt Google "AI Eng"` |
-| `pipeline cv` | `<profile> [--html\|--latex]` | Compiles ATS single-page HTML or LaTeX resume | `node scripts/cli.js pipeline cv profile.json --html` |
+| `pipeline cv` | `<profile> [--html\\|--latex]` | Compiles ATS single-page HTML or LaTeX resume | `node scripts/cli.js pipeline cv profile.json --html` |
 | `pipeline cover` | `<co> <role>` | Generates tailored 3-paragraph executive cover letter | `node scripts/cli.js pipeline cover Google "AI Eng"` |
 | `pipeline interview` | `<co> <role>` | Curates STAR+R question banks and company track | `node scripts/cli.js pipeline interview Google "AI Eng"` |
 | `pipeline outreach` | `<recruiter> <co> <role>` | Generates concise recruiter note (<300 chars) | `node scripts/cli.js pipeline outreach "Sarah" Google "AI Eng"` |
