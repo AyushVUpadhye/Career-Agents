@@ -2076,7 +2076,7 @@
       "type": "skill"
     },
     {
-      "id": "ai-engineer",
+      "id": "path-ai-engineer",
       "name": "AI Engineer",
       "type": "career-path"
     },
@@ -2106,7 +2106,7 @@
       "type": "skill"
     },
     {
-      "id": "backend-engineer",
+      "id": "path-backend-engineer",
       "name": "Backend Engineer",
       "type": "career-path"
     },
@@ -2131,7 +2131,7 @@
       "type": "skill"
     },
     {
-      "id": "cloud-engineer",
+      "id": "path-cloud-engineer",
       "name": "Cloud Engineer",
       "type": "career-path"
     },
@@ -2161,7 +2161,7 @@
       "type": "skill"
     },
     {
-      "id": "cybersecurity-engineer",
+      "id": "path-cybersecurity-engineer",
       "name": "Cybersecurity Engineer",
       "type": "career-path"
     },
@@ -2191,6 +2191,11 @@
       "type": "skill"
     },
     {
+      "id": "path-devops-engineer",
+      "name": "DevOps Engineer",
+      "type": "career-path"
+    },
+    {
       "id": "skill-configuration-management",
       "name": "Configuration Management",
       "type": "skill"
@@ -2211,7 +2216,7 @@
       "type": "skill"
     },
     {
-      "id": "frontend-engineer",
+      "id": "path-frontend-engineer",
       "name": "Frontend Engineer",
       "type": "career-path"
     },
@@ -2241,7 +2246,7 @@
       "type": "skill"
     },
     {
-      "id": "full-stack-engineer",
+      "id": "path-full-stack-engineer",
       "name": "Full Stack Engineer",
       "type": "career-path"
     },
@@ -2271,6 +2276,11 @@
       "type": "skill"
     },
     {
+      "id": "path-product-manager",
+      "name": "Product Manager",
+      "type": "career-path"
+    },
+    {
       "id": "skill-product-roadmap-planning",
       "name": "Product Roadmap Planning",
       "type": "skill"
@@ -2296,7 +2306,7 @@
       "type": "skill"
     },
     {
-      "id": "software-engineer",
+      "id": "path-software-engineer",
       "name": "Software Engineer",
       "type": "career-path"
     },
@@ -2316,7 +2326,7 @@
       "type": "skill"
     },
     {
-      "id": "startup-founder",
+      "id": "path-startup-founder",
       "name": "Startup Founder",
       "type": "career-path"
     },
@@ -10524,12 +10534,12 @@
     },
     {
       "source": "ai-engineer-bundle",
-      "target": "ai-engineer",
+      "target": "path-ai-engineer",
       "relation": "includes_path"
     },
     {
       "source": "ai-engineer-bundle",
-      "target": "software-engineer",
+      "target": "path-software-engineer",
       "relation": "includes_path"
     },
     {
@@ -10624,17 +10634,17 @@
     },
     {
       "source": "career-switch-bundle",
-      "target": "full-stack-engineer",
+      "target": "path-full-stack-engineer",
       "relation": "includes_path"
     },
     {
       "source": "career-switch-bundle",
-      "target": "product-manager",
+      "target": "path-product-manager",
       "relation": "includes_path"
     },
     {
       "source": "career-switch-bundle",
-      "target": "startup-founder",
+      "target": "path-startup-founder",
       "relation": "includes_path"
     },
     {
@@ -10739,22 +10749,22 @@
     },
     {
       "source": "faang-bundle",
-      "target": "software-engineer",
+      "target": "path-software-engineer",
       "relation": "includes_path"
     },
     {
       "source": "faang-bundle",
-      "target": "ai-engineer",
+      "target": "path-ai-engineer",
       "relation": "includes_path"
     },
     {
       "source": "faang-bundle",
-      "target": "cloud-engineer",
+      "target": "path-cloud-engineer",
       "relation": "includes_path"
     },
     {
       "source": "faang-bundle",
-      "target": "backend-engineer",
+      "target": "path-backend-engineer",
       "relation": "includes_path"
     },
     {
@@ -10854,17 +10864,17 @@
     },
     {
       "source": "full-stack-bundle",
-      "target": "full-stack-engineer",
+      "target": "path-full-stack-engineer",
       "relation": "includes_path"
     },
     {
       "source": "full-stack-bundle",
-      "target": "frontend-engineer",
+      "target": "path-frontend-engineer",
       "relation": "includes_path"
     },
     {
       "source": "full-stack-bundle",
-      "target": "backend-engineer",
+      "target": "path-backend-engineer",
       "relation": "includes_path"
     },
     {
@@ -10964,22 +10974,22 @@
     },
     {
       "source": "internship-bundle",
-      "target": "software-engineer",
+      "target": "path-software-engineer",
       "relation": "includes_path"
     },
     {
       "source": "internship-bundle",
-      "target": "frontend-engineer",
+      "target": "path-frontend-engineer",
       "relation": "includes_path"
     },
     {
       "source": "internship-bundle",
-      "target": "backend-engineer",
+      "target": "path-backend-engineer",
       "relation": "includes_path"
     },
     {
       "source": "internship-bundle",
-      "target": "full-stack-engineer",
+      "target": "path-full-stack-engineer",
       "relation": "includes_path"
     },
     {
@@ -11074,22 +11084,22 @@
     },
     {
       "source": "remote-job-bundle",
-      "target": "software-engineer",
+      "target": "path-software-engineer",
       "relation": "includes_path"
     },
     {
       "source": "remote-job-bundle",
-      "target": "full-stack-engineer",
+      "target": "path-full-stack-engineer",
       "relation": "includes_path"
     },
     {
       "source": "remote-job-bundle",
-      "target": "product-manager",
+      "target": "path-product-manager",
       "relation": "includes_path"
     },
     {
       "source": "remote-job-bundle",
-      "target": "startup-founder",
+      "target": "path-startup-founder",
       "relation": "includes_path"
     },
     {
@@ -11179,17 +11189,17 @@
     },
     {
       "source": "startup-founder-bundle",
-      "target": "startup-founder",
+      "target": "path-startup-founder",
       "relation": "includes_path"
     },
     {
       "source": "startup-founder-bundle",
-      "target": "product-manager",
+      "target": "path-product-manager",
       "relation": "includes_path"
     },
     {
       "source": "startup-founder-bundle",
-      "target": "ai-engineer",
+      "target": "path-ai-engineer",
       "relation": "includes_path"
     },
     {
@@ -11233,662 +11243,662 @@
       "relation": "includes_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "skill-llms-&-prompt-engineering",
       "relation": "requires_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "skill-rag-&-semantic-search",
       "relation": "requires_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "skill-python-&-pytorch",
       "relation": "requires_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "skill-agentic-architectures",
       "relation": "requires_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "skill-model-orchestration",
       "relation": "requires_skill"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "ai-engineering",
       "relation": "uses_division"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "ai-business",
       "relation": "uses_division"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "cloud",
       "relation": "uses_division"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "ai-agent-architect",
       "relation": "uses_agent"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "llm-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "rag-architect",
       "relation": "uses_agent"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "ai-engineer-career-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "ai-engineer",
+      "source": "path-ai-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "skill-api-design-(rest/graphql)",
       "relation": "requires_skill"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "skill-database-architecture-&-indexing",
       "relation": "requires_skill"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "skill-distributed-systems",
       "relation": "requires_skill"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "skill-server-side-languages-(go,-python,-java,-node.js)",
       "relation": "requires_skill"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "skill-performance-engineering",
       "relation": "requires_skill"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "data-engineering",
       "relation": "uses_division"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "interview",
       "relation": "uses_division"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "backend-architect",
       "relation": "uses_agent"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "database-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "system-design-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "backend-engineer",
+      "source": "path-backend-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "skill-aws-/-gcp-/-azure",
       "relation": "requires_skill"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "skill-terraform-&-iac",
       "relation": "requires_skill"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "skill-kubernetes-&-containers",
       "relation": "requires_skill"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "skill-networking-&-vpcs",
       "relation": "requires_skill"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "skill-site-reliability-(sre)",
       "relation": "requires_skill"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "cloud",
       "relation": "uses_division"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "cybersecurity",
       "relation": "uses_division"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "aws-cloud-architect",
       "relation": "uses_agent"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "kubernetes-specialist",
       "relation": "uses_agent"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "terraform-specialist",
       "relation": "uses_agent"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "site-reliability-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "cloud-engineer",
+      "source": "path-cloud-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "skill-application-security-&-owasp",
       "relation": "requires_skill"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "skill-identity-&-access-management-(iam)",
       "relation": "requires_skill"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "skill-threat-modeling-&-pen-testing",
       "relation": "requires_skill"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "skill-incident-response-&-forensics",
       "relation": "requires_skill"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "skill-regulatory-compliance-(soc2/gdpr)",
       "relation": "requires_skill"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "cybersecurity",
       "relation": "uses_division"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "cloud",
       "relation": "uses_division"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "application-security-specialist",
       "relation": "uses_agent"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "cloud-security-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "incident-response-specialist",
       "relation": "uses_agent"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "governance-risk-compliance-advisor",
       "relation": "uses_agent"
     },
     {
-      "source": "cybersecurity-engineer",
+      "source": "path-cybersecurity-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "skill-ci/cd-pipelines",
       "relation": "requires_skill"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "skill-configuration-management",
       "relation": "requires_skill"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "skill-infrastructure-as-code",
       "relation": "requires_skill"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "skill-monitoring-&-logging",
       "relation": "requires_skill"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "skill-build-tools-&-packaging",
       "relation": "requires_skill"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "cloud",
       "relation": "uses_division"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "cybersecurity",
       "relation": "uses_division"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "devops-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "platform-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "site-reliability-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "devops-engineer",
+      "source": "path-devops-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "skill-javascript-/-typescript",
       "relation": "requires_skill"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "skill-react-/-next.js",
       "relation": "requires_skill"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "skill-css-&-styling",
       "relation": "requires_skill"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "skill-web-vitals-&-performance",
       "relation": "requires_skill"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "skill-api-integration",
       "relation": "requires_skill"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "resume",
       "relation": "uses_division"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "career",
       "relation": "uses_division"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "nextjs-performance-engineer",
       "relation": "uses_agent"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "portfolio-reviewer",
       "relation": "uses_agent"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "ats-resume-reviewer",
       "relation": "uses_agent"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "ats-optimization",
       "relation": "uses_workflow"
     },
     {
-      "source": "frontend-engineer",
+      "source": "path-frontend-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "skill-frontend-frameworks",
       "relation": "requires_skill"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "skill-backend-apis",
       "relation": "requires_skill"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "skill-database-design",
       "relation": "requires_skill"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "skill-cloud-deployments",
       "relation": "requires_skill"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "skill-end-to-end-testing",
       "relation": "requires_skill"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "cloud",
       "relation": "uses_division"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "career",
       "relation": "uses_division"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "mern-architect",
       "relation": "uses_agent"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "code-reviewer",
       "relation": "uses_agent"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "placement-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "fresher-placement",
       "relation": "uses_workflow"
     },
     {
-      "source": "full-stack-engineer",
+      "source": "path-full-stack-engineer",
       "target": "ats-optimization",
       "relation": "uses_workflow"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "skill-product-roadmap-planning",
       "relation": "requires_skill"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "skill-user-interviewing-&-feedback",
       "relation": "requires_skill"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "skill-prioritization-frameworks",
       "relation": "requires_skill"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "skill-market-&-competitor-analysis",
       "relation": "requires_skill"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "skill-data-driven-decisions",
       "relation": "requires_skill"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "startup",
       "relation": "uses_division"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "career",
       "relation": "uses_division"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "networking",
       "relation": "uses_division"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "product-manager",
       "relation": "uses_agent"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "product-manager-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "market-research-analyst",
       "relation": "uses_agent"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "ats-optimization",
       "relation": "uses_workflow"
     },
     {
-      "source": "product-manager",
+      "source": "path-product-manager",
       "target": "salary-negotiation",
       "relation": "uses_workflow"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "skill-data-structures-&-algorithms",
       "relation": "requires_skill"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "skill-object-oriented-design",
       "relation": "requires_skill"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "skill-system-design",
       "relation": "requires_skill"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "skill-version-control-(git)",
       "relation": "requires_skill"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "skill-testing-&-debugging",
       "relation": "requires_skill"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "engineering",
       "relation": "uses_division"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "interview",
       "relation": "uses_division"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "career",
       "relation": "uses_division"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "google-interview-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "technical-interview-coach",
       "relation": "uses_agent"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "code-reviewer",
       "relation": "uses_agent"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "mock-interviewer",
       "relation": "uses_agent"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "faang-preparation",
       "relation": "uses_workflow"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "technical-interview-week",
       "relation": "uses_workflow"
     },
     {
-      "source": "software-engineer",
+      "source": "path-software-engineer",
       "target": "fresher-placement",
       "relation": "uses_workflow"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "skill-mvp-scoping-&-validation",
       "relation": "requires_skill"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "skill-go-to-market-execution",
       "relation": "requires_skill"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "skill-unit-economics-&-token-economics",
       "relation": "requires_skill"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "skill-outreach-systems-design",
       "relation": "requires_skill"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "skill-founder-pitching-&-narrative",
       "relation": "requires_skill"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "startup",
       "relation": "uses_division"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "ai-business",
       "relation": "uses_division"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "gtm",
       "relation": "uses_division"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "freelancing",
       "relation": "uses_division"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "founder-advisor",
       "relation": "uses_agent"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "growth-strategist",
       "relation": "uses_agent"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "ai-product-builder",
       "relation": "uses_agent"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "market-research-analyst",
       "relation": "uses_agent"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "linkedin-growth",
       "relation": "uses_workflow"
     },
     {
-      "source": "startup-founder",
+      "source": "path-startup-founder",
       "target": "remote-job-hunt",
       "relation": "uses_workflow"
     },

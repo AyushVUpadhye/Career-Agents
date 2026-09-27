@@ -261,6 +261,20 @@ async function runTests() {
     const graphCoParsed = JSON.parse(graphCoRes.result?.content?.[0]?.text || '{}');
     assertTest('Tool: knowledge_graph companies query', graphCoParsed.companies && graphCoParsed.companies.length > 0);
 
+    // Knowledge Graph career paths whose ids are also agent ids
+    for (const [skill, careerPath] of [['Configuration Management', 'DevOps Engineer'], ['Prioritization Frameworks', 'Product Manager']]) {
+      console.log(`Calling knowledge_graph for career path skill "${skill}"...`);
+      const graphSkillRes = await sendRequest('tools/call', {
+        name: 'knowledge_graph',
+        arguments: { entity: skill }
+      });
+      const graphSkillParsed = JSON.parse(graphSkillRes.result?.content?.[0]?.text || '{}');
+      assertTest(`Tool: knowledge_graph career path for ${skill}`,
+        Array.isArray(graphSkillParsed.paths) && graphSkillParsed.paths.includes(careerPath),
+        `paths: ${JSON.stringify(graphSkillParsed.paths)}`
+      );
+    }
+
     // 13. Resources List
     console.log('Requesting resources/list...');
     const resList = await sendRequest('resources/list', {});
