@@ -931,11 +931,14 @@ Commands:
   company [company-id]           Inspect target company preparation tracks
   launcher <agent/bundle> [plat] Copy prompts and launch AI browser interface
   export <type> <id> <format>    Consolidate and export bundle/company/path prompt packs
-  use <agent-id> <tool>          Export prompt configuration bundle for target IDE/tool`);
+  use <agent-id> <tool>          Export prompt configuration bundle for target IDE/tool
+  resume <subcommand>            ATS resume tools (templates, build, score, match, faang)
+  pipeline <subcommand>          Job search and application lifecycle pipeline`);
 
   if (features.resumeStudio) {
     console.log(`
   -- AI Resume Studio --
+  resume <subcommand>            Manage ATS templates, scoring, job matching, and FAANG rubrics
   review <file> [company]        Analyze resume section completeness and target fit
   score [file]                   ATS resume score (if file path is provided) or interactive questionnaire
   improve <file>                 List weak bullets and yield optimized suggestions
@@ -967,6 +970,23 @@ Commands:
   project <type>                 Generate skeleton structures (ai-engineer, backend, frontend)
   dashboard                      Render personal progress checklist and analytics dashboard`);
   }
+
+  console.log(`
+  -- Application Pipeline & Job Search --
+  pipeline tracker               Display live application pipeline tracker
+  pipeline add <co> <role> [url] Add target job entry to application tracker
+  pipeline status <co> <status>  Update application lifecycle status
+  pipeline stats                 Display pipeline funnel performance statistics
+  pipeline scan [board]          Scan and audit ATS job portal boards
+  pipeline match <resume> <jd>   Score candidate readiness against job description
+  pipeline deep <company>        Deep-research company tech stack and hiring tracks
+  pipeline cv <resume> [format]  Compile ATS single-page HTML or LaTeX resume
+  pipeline cover <co> <role>     Generate tailored cover letter draft
+  pipeline interview <co> <role> Generate behavioral and technical STAR question banks
+  pipeline outreach <co> <role>  Generate tailored recruiter networking message
+  pipeline dedup                 Deduplicate tracked job applications
+  pipeline doctor                Run pipeline health diagnostic checks
+  pipeline digest                Generate weekly application progress digest`);
 
   console.log(`
   -- Utilities --
