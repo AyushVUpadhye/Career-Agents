@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { resolvePython } from './resolve-python.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,7 +12,7 @@ const tasks = [
   { name: '1. ESLint Check', cmd: 'npm run lint', cwd: path.join(__dirname, '../apps/web') },
   { name: '2. TypeScript Type Check', cmd: 'npm run type-check', cwd: path.join(__dirname, '../apps/web') },
   { name: '3. Next.js Build', cmd: 'npm run build', cwd: path.join(__dirname, '../apps/web') },
-  { name: '4. Integrity Validation', cmd: 'python scripts/validate.py', cwd: path.join(__dirname, '..') },
+  { name: '4. Integrity Validation', cmd: `${resolvePython() || 'python'} scripts/validate.py`, cwd: path.join(__dirname, '..') },
   { name: '5. MCP Integration Tests', cmd: 'node scripts/test-mcp.js', cwd: path.join(__dirname, '..') },
 ];
 
