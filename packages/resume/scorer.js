@@ -122,3 +122,56 @@ export function scoreResumeData(data) {
     recommendations: recommendations.length > 0 ? recommendations : ['Excellent! Your resume complies with high-performance ATS indexing rules.']
   };
 }
+
+export function runScorerCLI(filePath) {
+  const c = {
+    reset: '\x1b[0m',
+    bold: '\x1b[1m',
+    green: '\x1b[32m',
+    cyan: '\x1b[36m',
+    yellow: '\x1b[33m',
+    red: '\x1b[31m',
+    gray: '\x1b[90m'
+  };
+
+  if (!filePath) {
+    console.error(`${c.red}Usage: career-agents resume score <resume-json-path>${c.reset}`);
+    return;
+  }
+
+  const resolved = path.resolve(filePath);
+  if (!fs.existsSync(resolved)) {
+    console.error(`${c.red}Resume file not found: ${filePath}${c.reset}`);
+    return;
+  }
+
+  let resumeData;
+  try {
+    resumeData = JSON.parse(fs.readFileSync(resolved, 'utf8'));
+  } catch (err) {
+    console.error(`${c.red}Failed to parse resume JSON: ${err.message}${c.reset}`);
+    return;
+  }
+
+  const result = scoreResumeData(resumeData);
+  if (!result) {
+    console.error(`${c.red}Failed to run ATS compliance audit.${c.reset}`);
+    return;
+  }
+
+  console.log(`\n${c.bold}=== ATS RESUME COMPLIANCE AUDIT ===${c.reset}`);
+  console.log(`File: ${c.cyan}${path.basename(resolved)}${c.reset}\n`);
+
+  const scoreColor = result.overallScore >= 85 ? c.green : result.overallScore >= 65 ? c.yellow : c.red;
+  console.log(`  ${c.bold}OVERALL ATS SCORE: ${scoreColor}${result.overallScore} / 100${c.reset}`);
+  console.log(`  ----------------------------------`);
+  console.log(`  • Formatting & Completeness : ${result.subscores.formatting} / 25`);
+  console.log(`  • Keywords & Skills Density : ${result.subscores.keywords} / 25`);
+  console.log(`  • Experience Depth          : ${result.subscores.experience} / 25`);
+  console.log(`  • Impact & Metrics          : ${result.subscores.impact} / 25\n`);
+
+  console.log(`${c.bold}Recommendations & Optimizations:${c.reset}`);
+  result.recommendations.forEach(rec => console.log(`  • ${rec}`));
+  console.log('');
+}
+

@@ -41,6 +41,9 @@ function testEnabledCommandHelp() {
   try {
     const res = spawnSync('node', [path.join(root, 'scripts', 'cli.js'), 'help'], { encoding: 'utf8' });
     assert.ok(res.stdout.includes('-- AI Resume Studio --'));
+    assert.ok(res.stdout.includes('-- Application Pipeline & Job Search --'));
+    assert.ok(res.stdout.includes('pipeline tracker'));
+    assert.ok(res.stdout.includes('resume <subcommand>'));
     // Verify disabled commands are hidden
     assert.ok(!res.stdout.includes('-- Profile & Fit Analyzers --'));
     assert.ok(!res.stdout.includes('-- Prep & Interactive Coaching --'));
@@ -50,10 +53,26 @@ function testEnabledCommandHelp() {
   }
 }
 
+function testResumeScoreCommand() {
+  console.log('Testing resume score command execution...');
+  const templatePath = path.join(root, 'templates', 'fresher', 'basic-fresher', 'template.json');
+  const res = spawnSync('node', [path.join(root, 'scripts', 'cli.js'), 'resume', 'score', templatePath], { encoding: 'utf8' });
+  assert.strictEqual(res.status, 0, 'resume score command should exit with code 0');
+  assert.ok(res.stdout.includes('ATS RESUME COMPLIANCE AUDIT'), 'output should contain audit header');
+  assert.ok(res.stdout.includes('OVERALL ATS SCORE:'), 'output should contain overall score');
+  assert.ok(res.stdout.includes('Formatting & Completeness'), 'output should contain formatting subscore');
+
+  const noArgRes = spawnSync('node', [path.join(root, 'scripts', 'cli.js'), 'resume', 'score'], { encoding: 'utf8' });
+  assert.strictEqual(noArgRes.status, 0);
+  assert.ok(noArgRes.stderr.includes('Usage: career-agents resume score'), 'should display usage on missing file argument');
+  console.log('[PASS] Resume score command executes and handles arguments cleanly.');
+}
+
 function run() {
   try {
     testDisabledCommand();
     testEnabledCommandHelp();
+    testResumeScoreCommand();
     console.log('=== ALL CLI ROUTING TESTS PASSED ===\n');
     process.exit(0);
   } catch (e) {
