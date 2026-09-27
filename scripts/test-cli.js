@@ -71,7 +71,12 @@ function testResumeScoreCommand() {
 function testPipelineStatusRole() {
   console.log('Testing pipeline status with several roles at one company...');
   const trackerPath = path.join(root, 'pipeline-tracker.md');
-  const originalTracker = fs.existsSync(trackerPath) ? fs.readFileSync(trackerPath, 'utf8') : null;
+  let originalTracker = null;
+  try {
+    originalTracker = fs.readFileSync(trackerPath, 'utf8');
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+  }
   const readStatuses = () => fs.readFileSync(trackerPath, 'utf8').split('\n')
     .filter(l => l.startsWith('| Google'))
     .map(l => l.split('|').slice(1, 4).map(c => c.trim()).join(' / '));
