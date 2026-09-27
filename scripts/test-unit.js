@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { analyzeJobMatch } from '../packages/resume/job-match.js';
+import { CompanyIntel } from '../packages/pipeline/company-intel.js';
+import { DedupEngine } from '../packages/pipeline/dedup.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -120,11 +122,71 @@ function testActionTools() {
   console.log('[PASS] Action-Oriented parsing helpers');
 }
 
+function testCompanyIntel() {
+  console.log('Testing CompanyIntel profile and requirements loading...');
+
+  const google = CompanyIntel.getProfile('google');
+  assert.strictEqual(google.found, true);
+  assert.strictEqual(google.name, 'Google');
+  assert.ok(Array.isArray(google.requiredSkills) && google.requiredSkills.length > 0, 'Google requiredSkills must be non-empty array');
+  assert.ok(google.requiredSkills.some(s => s.toLowerCase().includes('data structures')), 'Google must require DSA');
+  assert.ok(Array.isArray(google.interviewStages) && google.interviewStages.length > 0, 'Google interviewStages must be non-empty array');
+  assert.ok(google.interviewStages.some(s => s.toLowerCase().includes('phone screen') || s.toLowerCase().includes('dsa')), 'Google interview stages must be loaded from registry');
+
+  const amazon = CompanyIntel.getProfile('amazon');
+  assert.strictEqual(amazon.found, true);
+  assert.strictEqual(amazon.name, 'Amazon');
+  assert.ok(amazon.requiredSkills.some(s => s.toLowerCase().includes('leadership principles')), 'Amazon must require Leadership Principles');
+
+  const unlisted = CompanyIntel.getProfile('non-existent-corp-xyz');
+  assert.strictEqual(unlisted.found, false);
+  assert.strictEqual(unlisted.tier, 'Standard Tech');
+  assert.ok(unlisted.requiredSkills.length > 0, 'Unlisted company must have fallback skills');
+
+  console.log('[PASS] CompanyIntel profile and requirements');
+}
+
+function testDedupEngine() {
+  console.log('Testing DedupEngine deduplication and normalizers...');
+
+  // 1. Normalizers
+  assert.strictEqual(DedupEngine.normalizeCompany('Google, Inc.'), 'google');
+  assert.strictEqual(DedupEngine.normalizeCompany('Stripe LLC'), 'stripe');
+  assert.strictEqual(DedupEngine.normalizeRole('Senior SWE'), 'senior software engineer');
+  assert.strictEqual(DedupEngine.normalizeRole('Staff SDE'), 'staff software engineer');
+
+  // 2. Deduplication with undefined / missing notes (must not throw TypeError)
+  const entriesWithMissingNotes = [
+    { company: 'Stripe', role: 'Software Engineer', status: 'applied' },
+    { company: 'Stripe Inc', role: 'SWE', status: 'interviewing', notes: 'First round done' },
+    { company: 'Google', role: 'Backend Engineer', status: 'screening' },
+    { company: 'Google', role: 'Backend Engineer', status: 'screening', notes: 'Recruiter called' }
+  ];
+
+  const deduped = DedupEngine.deduplicate(entriesWithMissingNotes);
+  assert.strictEqual(deduped.length, 2, 'Should deduplicate Stripe and Google entries');
+  assert.strictEqual(deduped[0].notes, 'First round done', 'Should merge notes onto entry with originally undefined notes');
+  assert.strictEqual(deduped[1].notes, 'Recruiter called', 'Should merge notes onto Google entry');
+
+  // 3. Deduplication merging multiple non-empty notes
+  const multiNotes = [
+    { company: 'Netflix', role: 'Platform Engineer', notes: 'Applied online' },
+    { company: 'Netflix', role: 'Platform Engineer', notes: 'Referral sent' }
+  ];
+  const merged = DedupEngine.deduplicate(multiNotes);
+  assert.strictEqual(merged.length, 1);
+  assert.strictEqual(merged[0].notes, 'Applied online; Referral sent');
+
+  console.log('[PASS] DedupEngine deduplication and normalizers');
+}
+
 try {
   testSemanticMatching();
   testFuzzyMatching();
   testGraphTraversal();
   testActionTools();
+  testCompanyIntel();
+  testDedupEngine();
   console.log('=== ALL UNIT TESTS PASSED ===\n');
   process.exit(0);
 } catch (e) {

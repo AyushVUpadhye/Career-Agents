@@ -27,8 +27,8 @@ export class CompanyIntel {
           slug,
           name: raw.name || companySlug,
           tier: raw.tier || 'Tier 1',
-          requiredSkills: raw.required_skills || [],
-          interviewStages: raw.interview_stages || ['Screen', 'Technical Round 1', 'System Design', 'Behavioral Loop'],
+          requiredSkills: raw.skills || raw.required_skills || [],
+          interviewStages: raw.interview_process || raw.interview_stages || ['Screen', 'Technical Round 1', 'System Design', 'Behavioral Loop'],
           culture: raw.culture || 'High engineering standards, autonomy, and cross-functional ownership.'
         };
       } catch {

@@ -64,7 +64,7 @@ export class DedupEngine {
       } else {
         const existing = map.get(key);
         // Merge notes
-        if (e.notes && !existing.notes.includes(e.notes)) {
+        if (e.notes && !(existing.notes && existing.notes.includes(e.notes))) {
           existing.notes = existing.notes ? `${existing.notes}; ${e.notes}` : e.notes;
         }
         // Update link if missing
