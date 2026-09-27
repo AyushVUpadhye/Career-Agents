@@ -68,11 +68,50 @@ function testResumeScoreCommand() {
   console.log('[PASS] Resume score command executes and handles arguments cleanly.');
 }
 
+function testPipelineStatusRole() {
+  console.log('Testing pipeline status with several roles at one company...');
+  const trackerPath = path.join(root, 'pipeline-tracker.md');
+  const originalTracker = fs.existsSync(trackerPath) ? fs.readFileSync(trackerPath, 'utf8') : null;
+  const readStatuses = () => fs.readFileSync(trackerPath, 'utf8').split('\n')
+    .filter(l => l.startsWith('| Google'))
+    .map(l => l.split('|').slice(1, 4).map(c => c.trim()).join(' / '));
+
+  try {
+    fs.writeFileSync(trackerPath, [
+      '# Job Application Pipeline Tracker',
+      '',
+      '| Company | Role | Status | Applied Date | Fit Score | Link | Notes |',
+      '|---------|------|--------|--------------|-----------|------|-------|',
+      '| Google | Software Engineer | applied | 2026-09-01 | - | - |  |',
+      '| Google | Data Engineer | applied | 2026-09-03 | - | - |  |',
+      ''
+    ].join('\n'), 'utf8');
+    const cli = path.join(root, 'scripts', 'cli.js');
+
+    const res = spawnSync('node', [cli, 'pipeline', 'status', 'Google', 'interviewing', 'Onsite scheduled', '--role', 'Data Engineer'], { encoding: 'utf8' });
+    assert.strictEqual(res.status, 0);
+    assert.deepStrictEqual(readStatuses(), ['Google / Software Engineer / applied', 'Google / Data Engineer / interviewing']);
+    assert.ok(fs.readFileSync(trackerPath, 'utf8').includes('| Google | Data Engineer | interviewing | 2026-09-03 | - | - | Onsite scheduled |'), 'Note should be on the Data Engineer row');
+
+    const ambiguous = spawnSync('node', [cli, 'pipeline', 'status', 'Google', 'offer'], { encoding: 'utf8' });
+    assert.ok(ambiguous.stdout.includes('--role'), 'Ambiguous update should ask for --role');
+    assert.deepStrictEqual(readStatuses(), ['Google / Software Engineer / applied', 'Google / Data Engineer / interviewing'], 'Ambiguous update must not change the tracker');
+  } finally {
+    if (originalTracker === null) {
+      fs.rmSync(trackerPath, { force: true });
+    } else {
+      fs.writeFileSync(trackerPath, originalTracker, 'utf8');
+    }
+  }
+  console.log('[PASS] pipeline status updates only the requested role.');
+}
+
 function run() {
   try {
     testDisabledCommand();
     testEnabledCommandHelp();
     testResumeScoreCommand();
+    testPipelineStatusRole();
     console.log('=== ALL CLI ROUTING TESTS PASSED ===\n');
     process.exit(0);
   } catch (e) {

@@ -975,7 +975,7 @@ Commands:
   -- Application Pipeline & Job Search --
   pipeline tracker               Display live application pipeline tracker
   pipeline add <co> <role> [url] Add target job entry to application tracker
-  pipeline status <co> <status>  Update application lifecycle status
+  pipeline status <co> <status>  Update application lifecycle status (--role <role> to pick one of several)
   pipeline stats                 Display pipeline funnel performance statistics
   pipeline scan [board]          Scan and audit ATS job portal boards
   pipeline match <resume> <jd>   Score candidate readiness against job description

@@ -2473,9 +2473,9 @@ async function handleToolsCall(id, params) {
           result = { success: true, message: 'Added application', entry };
         } else if (action === 'status') {
           if (!company || !status) throw new Error('Missing company or status');
-          const updated = tracker.updateStatus(company, status, notes);
+          const updated = tracker.updateStatus(company, status, notes, role);
           tracker.save(trackerPath);
-          result = { success: !!updated, message: updated ? 'Updated status' : 'Application not found', entry: updated };
+          result = { success: !!updated, message: updated ? 'Updated status' : 'Application not found (pass role when the company has several applications)', entry: updated };
         } else if (action === 'dedup') {
           const { DedupEngine } = await import('../packages/pipeline/dedup.js');
           const before = tracker.entries.length;

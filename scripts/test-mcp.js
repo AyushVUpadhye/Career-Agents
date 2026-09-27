@@ -391,6 +391,28 @@ async function runTests() {
         added?.status === 'applied' && added?.notes === 'Found via alumni network',
         JSON.stringify(added)
       );
+
+      console.log('Calling career_pipeline_track status for one of two roles at a company...');
+      await sendRequest('tools/call', {
+        name: 'career_pipeline_track',
+        arguments: { action: 'add', company: 'Northwind', role: 'Data Engineer' }
+      });
+      await sendRequest('tools/call', {
+        name: 'career_pipeline_track',
+        arguments: { action: 'status', company: 'Northwind', role: 'Data Engineer', status: 'offer', notes: 'Offer received' }
+      });
+      const roleListRes = await sendRequest('tools/call', {
+        name: 'career_pipeline_track',
+        arguments: { action: 'list' }
+      });
+      const roleEntries = JSON.parse(roleListRes.result?.content?.[0]?.text || '{}').entries || [];
+      const platformRole = roleEntries.find(e => e.company === 'Northwind' && e.role === 'Platform Engineer');
+      const dataRole = roleEntries.find(e => e.company === 'Northwind' && e.role === 'Data Engineer');
+      assertTest('Tool: career_pipeline_track status updates only the given role',
+        platformRole?.status === 'interviewing' && platformRole?.notes === 'Referral from former teammate' &&
+        dataRole?.status === 'offer' && dataRole?.notes === 'Offer received',
+        JSON.stringify([platformRole, dataRole])
+      );
     } finally {
       if (originalTracker === null) {
         fs.rmSync(trackerPath, { force: true });

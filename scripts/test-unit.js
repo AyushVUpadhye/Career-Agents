@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { analyzeJobMatch } from '../packages/resume/job-match.js';
 import { CompanyIntel } from '../packages/pipeline/company-intel.js';
 import { DedupEngine } from '../packages/pipeline/dedup.js';
+import { ApplicationTracker } from '../packages/pipeline/tracker.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -180,6 +181,48 @@ function testDedupEngine() {
   console.log('[PASS] DedupEngine deduplication and normalizers');
 }
 
+function testTrackerStatusTargeting() {
+  console.log('Testing ApplicationTracker status updates with several roles at one company...');
+
+  const tracker = new ApplicationTracker([
+    { company: 'Google', role: 'Software Engineer', status: 'applied', appliedDate: '2026-09-01', fitScore: 82, link: 'https://careers.google.com/jobs/1', notes: 'Referral from alumni' },
+    { company: 'Google', role: 'Data Engineer', status: 'applied', appliedDate: '2026-09-03', fitScore: null, link: '', notes: 'Applied online' },
+    { company: 'Stripe', role: 'Backend Engineer', status: 'screening', appliedDate: '2026-09-05', fitScore: 75, link: '', notes: '' }
+  ]);
+  const [googleSwe, googleData, stripe] = tracker.entries;
+  const sweBefore = { ...googleSwe };
+
+  // 1. Targeting a role updates only that application
+  const updated = tracker.updateStatus('Google', 'Interviewing', 'Onsite scheduled', 'data engineer');
+  assert.strictEqual(updated, googleData, 'Should return the Data Engineer application');
+  assert.strictEqual(googleData.status, 'interviewing');
+  assert.strictEqual(googleData.notes, 'Applied online; Onsite scheduled');
+  assert.deepStrictEqual(googleSwe, sweBefore, 'Software Engineer application must be untouched');
+
+  // 2. Without a role, a company with several applications is ambiguous
+  assert.strictEqual(tracker.updateStatus('Google', 'offer', 'Which one?'), null, 'Ambiguous company should not be updated');
+  assert.strictEqual(googleSwe.status, 'applied');
+  assert.strictEqual(googleData.status, 'interviewing');
+
+  // 3. Without a role, a company with a single application still works
+  assert.strictEqual(tracker.updateStatus('stripe', 'interviewing', 'Hiring manager call'), stripe);
+  assert.strictEqual(stripe.status, 'interviewing');
+  assert.strictEqual(stripe.notes, 'Hiring manager call');
+
+  // 4. Unknown role is not found
+  assert.strictEqual(tracker.updateStatus('Google', 'offer', '', 'Product Manager'), null);
+
+  // 5. Markdown round-trip keeps each application's own status
+  const reloaded = ApplicationTracker.parseMarkdown(tracker.toMarkdown()).entries;
+  assert.deepStrictEqual(reloaded.map(e => [e.company, e.role, e.status]), [
+    ['Google', 'Software Engineer', 'applied'],
+    ['Google', 'Data Engineer', 'interviewing'],
+    ['Stripe', 'Backend Engineer', 'interviewing']
+  ]);
+
+  console.log('[PASS] ApplicationTracker status updates target the intended application');
+}
+
 try {
   testSemanticMatching();
   testFuzzyMatching();
@@ -187,6 +230,7 @@ try {
   testActionTools();
   testCompanyIntel();
   testDedupEngine();
+  testTrackerStatusTargeting();
   console.log('=== ALL UNIT TESTS PASSED ===\n');
   process.exit(0);
 } catch (e) {
