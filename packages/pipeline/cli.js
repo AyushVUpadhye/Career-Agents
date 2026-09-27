@@ -196,8 +196,9 @@ export async function runCareerPipelineCLI(subcommand, args = []) {
       console.log(`Target: ${company} · ${role}\n`);
       if (track) {
         console.log(`${c.bold}Company Overview:${c.reset} ${track.name || company} (${track.tier || 'Tier 1'})`);
-        if (track.interview_stages) {
-          console.log(`${c.bold}Interview Stages:${c.reset} ${track.interview_stages.join(' → ')}`);
+        const stages = track.interview_process || track.interview_stages;
+        if (stages && stages.length > 0) {
+          console.log(`${c.bold}Interview Stages:${c.reset} ${stages.join(' → ')}`);
         }
       }
       console.log(`\n${c.bold}Core STAR Question Scenarios:${c.reset}`);
@@ -250,7 +251,8 @@ export async function runCareerPipelineCLI(subcommand, args = []) {
       if (track) {
         console.log(`Company       : ${c.bold}${track.name || company}${c.reset}`);
         console.log(`Hiring Bar    : ${track.tier || 'High'}`);
-        console.log(`Core Skills   : ${(track.required_skills || []).join(', ') || 'Distributed Systems, DSA'}`);
+        const skills = track.skills || track.required_skills || [];
+        console.log(`Core Skills   : ${skills.join(', ') || 'Distributed Systems, DSA'}`);
         console.log(`Culture Notes : ${track.culture || 'Strong focus on scalability, autonomy, and ownership.'}`);
       } else {
         console.log(`Company: ${company} (Standard tech analysis generated)`);

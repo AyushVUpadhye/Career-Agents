@@ -141,7 +141,8 @@ Requirements:
   console.log(`\n${c.bold}[Step 7/10] Building STAR Interview Prep Track from Registry...${c.reset}`);
   const googleTrack = InterviewCoach.getCompanyTrack('Google');
   const starBank = InterviewCoach.generateSTARBank(matchResult.strengths || [], 'AI/ML Infrastructure Engineer');
-  console.log(`  ✓ Resolved Track: ${googleTrack?.name || 'Google'} (Interview Stages: ${googleTrack?.interview_stages?.join(' → ') || 'Technical Screen → Onsite Loop'})`);
+  const googleStages = googleTrack?.interview_process || googleTrack?.interview_stages;
+  console.log(`  ✓ Resolved Track: ${googleTrack?.name || 'Google'} (Interview Stages: ${googleStages?.join(' → ') || 'Technical Screen → Onsite Loop'})`);
   console.log(`  ✓ Curated ${starBank.questions.length} STAR Scenarios across: ${starBank.questions.map(q => q.category).join(', ')}`);
 
   // 8. STEP 8: Recruiter Networking Outreach (Sample Recruiter Fixture)
