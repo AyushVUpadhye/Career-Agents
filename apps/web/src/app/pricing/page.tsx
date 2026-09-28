@@ -84,9 +84,6 @@ export default function PricingPage() {
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-sky-400 text-xs font-mono font-medium">
-            Transparent Pricing
-          </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
             Transparent Plans for <span className="text-sky-400">Engineering Careers</span>
           </h1>
@@ -140,12 +137,17 @@ export default function PricingPage() {
         <PricingCards plans={plans} billingCycle={billingCycle} currency={currency} />
 
         {/* Security Assurance */}
-        <div className="p-6 rounded-2xl bg-[#070b14] border border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <ShieldCheck className="w-4 h-4 text-sky-400" />
-            <span>Local-first architecture guarantee: Your resumes are never sold or trained upon.</span>
-          </div>
-          <div>Cancel or switch plans anytime with single-click billing management.</div>
+        <div className="flex justify-start pt-4 pb-8">
+          <ul className="flex flex-col gap-3 text-xs sm:text-sm font-mono text-slate-400">
+            <li className="flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-sky-500 shrink-0" />
+              <span>Local-first architecture guarantee: Your resumes are never sold or trained upon.</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-sky-500 shrink-0" />
+              <span>Cancel or switch plans anytime with single-click billing management.</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
