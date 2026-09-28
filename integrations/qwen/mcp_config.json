@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "career-agents": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "career-agents",
+        "mcp"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

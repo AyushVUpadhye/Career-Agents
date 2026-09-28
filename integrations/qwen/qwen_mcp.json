@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "career-agents": {
+      "command": "node",
+      "args": [
+        "d:/CodeMyFYP-Agents/scripts/cli.js",
+        "mcp"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

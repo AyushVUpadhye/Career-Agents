@@ -11,6 +11,44 @@ pip install qwen-agent
 ## Usage
 Query Qwen chat models via API or command line tools.
 
+## MCP Protocol Integration
+
+To connect Qwen Agent or Qwen CLI directly to the **Career-Agents MCP Server**, add the following configuration to your Qwen client's MCP configuration (`mcp_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "career-agents": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "career-agents",
+        "mcp"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
+```
+
+For local workspace development:
+
+```json
+{
+  "mcpServers": {
+    "career-agents": {
+      "command": "node",
+      "args": [
+        "d:/CodeMyFYP-Agents/scripts/cli.js",
+        "mcp"
+      ]
+    }
+  }
+}
+```
+
 ## Agent Loading
 Export the agent instructions as Prompt Bundle format:
 ```bash
