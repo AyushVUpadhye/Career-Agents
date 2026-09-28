@@ -248,7 +248,7 @@ def generate_knowledge_graph(agents, divisions, workflows, bundles, companies, p
         for wf in b.get("workflows", []):
             add_edge(bid, wf, "includes_workflow")
         for cp in b.get("career_paths", []):
-            add_edge(bid, cp, "includes_path")
+            add_edge(bid, "path-" + cp, "includes_path")
         for comp in b.get("companies", []):
             comp_id = comp.lower()
             add_node(comp_id, comp, "company")
@@ -258,9 +258,10 @@ def generate_knowledge_graph(agents, divisions, workflows, bundles, companies, p
             add_node(skill_id, skill, "skill")
             add_edge(bid, skill_id, "includes_skill")
 
-    # Add career path nodes and mapping edges
+    # Add career path nodes and mapping edges. Path ids are namespaced (like skills)
+    # because some of them are also agent ids, e.g. "devops-engineer".
     for p in paths:
-        pid = p.get("id")
+        pid = "path-" + p.get("id")
         add_node(pid, p.get("name"), "career-path")
         for skill in p.get("core_skills", []):
             skill_id = "skill-" + skill.lower().replace(" ", "-")
@@ -271,7 +272,7 @@ def generate_knowledge_graph(agents, divisions, workflows, bundles, companies, p
                 add_node(div, div.capitalize(), "division")
                 add_edge(pid, div, "uses_division")
             else:
-                print(f"  WARNING: Career path '{pid}' has invalid recommended_division {repr(div)} — skipping.")
+                print(f"  WARNING: Career path '{p.get('id')}' has invalid recommended_division {repr(div)} — skipping.")
         for agent in p.get("recommended_agents", []):
             add_edge(pid, agent, "uses_agent")
         for wf in p.get("recommended_workflows", []):
