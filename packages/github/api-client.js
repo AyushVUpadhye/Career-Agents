@@ -4,9 +4,6 @@
  * Copyright (c) 2026 Karthik Rajesh Shet · MIT License
  */
 
-import fs from 'fs';
-import path from 'path';
-
 /**
  * Safely retrieve GitHub Token from environment
  */
@@ -29,12 +26,22 @@ export function getGithubHeaders(token = getGithubToken()) {
   return headers;
 }
 
+function buildValidatedApiUrl(endpointPath) {
+  const cleanPath = endpointPath.startsWith('/') ? endpointPath : '/' + endpointPath;
+  const targetUrl = new URL(cleanPath, 'https://api.github.com');
+  if (targetUrl.origin !== 'https://api.github.com') {
+    throw new Error('Security Violation: Outbound request target must be official GitHub API host (api.github.com).');
+  }
+  return targetUrl.toString();
+}
+
 /**
  * Fetch authenticated GitHub User Profile
  */
 export async function getAuthenticatedUser(token = getGithubToken()) {
   const headers = getGithubHeaders(token);
-  const res = await fetch('https://api.github.com/user', { headers });
+  const targetUrl = buildValidatedApiUrl('/user');
+  const res = await fetch(targetUrl, { headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(`GitHub API user authentication failed (${res.status}): ${err.message || res.statusText}`);
@@ -53,14 +60,17 @@ export async function pushFileToRepo({ owner, repo, filePath, content, commitMes
     throw new Error('Missing required arguments: owner, repo, filePath, and content are required.');
   }
 
-  const cleanPath = filePath.replace(/^\/+/, '');
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${cleanPath}?ref=${branch}`;
+  const cleanOwner = String(owner).replace(/[^a-zA-Z0-9_-]/g, '');
+  const cleanRepo = String(repo).replace(/[^a-zA-Z0-9_.-]/g, '');
+  const cleanPath = String(filePath).replace(/^\/+/, '');
+
+  const getUrl = buildValidatedApiUrl(`/repos/${cleanOwner}/${cleanRepo}/contents/${cleanPath}?ref=${encodeURIComponent(branch)}`);
   const headers = getGithubHeaders(token);
 
   // 1. Check if file already exists to get its sha
   let existingSha = null;
   try {
-    const getRes = await fetch(url, { headers });
+    const getRes = await fetch(getUrl, { headers });
     if (getRes.ok) {
       const existingFile = await getRes.json();
       existingSha = existingFile.sha;
@@ -70,7 +80,7 @@ export async function pushFileToRepo({ owner, repo, filePath, content, commitMes
   // 2. Base64 encode content
   const base64Content = Buffer.from(String(content), 'utf8').toString('base64');
   const payload = {
-    message: commitMessage || `feat(career-agents): update ${cleanPath}`,
+    message: String(commitMessage || `feat(career-agents): update ${cleanPath}`),
     content: base64Content,
     branch
   };
@@ -78,7 +88,7 @@ export async function pushFileToRepo({ owner, repo, filePath, content, commitMes
     payload.sha = existingSha;
   }
 
-  const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${cleanPath}`;
+  const putUrl = buildValidatedApiUrl(`/repos/${cleanOwner}/${cleanRepo}/contents/${cleanPath}`);
   const putRes = await fetch(putUrl, {
     method: 'PUT',
     headers: { ...headers, 'Content-Type': 'application/json' },
@@ -87,7 +97,7 @@ export async function pushFileToRepo({ owner, repo, filePath, content, commitMes
 
   if (!putRes.ok) {
     const errData = await putRes.json().catch(() => ({}));
-    throw new Error(`Failed to push ${cleanPath} to ${owner}/${repo} (${putRes.status}): ${errData.message || putRes.statusText}`);
+    throw new Error(`Failed to push ${cleanPath} to ${cleanOwner}/${cleanRepo} (${putRes.status}): ${errData.message || putRes.statusText}`);
   }
 
   const result = await putRes.json();
@@ -111,15 +121,17 @@ export async function createRepository({ name, description = '', isPrivate = fal
     throw new Error('Repository name is required.');
   }
 
+  const cleanName = String(name).replace(/[^a-zA-Z0-9_.-]/g, '');
   const headers = getGithubHeaders(token);
   const payload = {
-    name,
-    description: description || 'Career-Agents Portfolio & Career Intelligence Repository',
-    private: isPrivate,
-    auto_init: autoInit
+    name: cleanName,
+    description: String(description || 'Career-Agents Portfolio & Career Intelligence Repository'),
+    private: Boolean(isPrivate),
+    auto_init: Boolean(autoInit)
   };
 
-  const res = await fetch('https://api.github.com/user/repos', {
+  const targetUrl = buildValidatedApiUrl('/user/repos');
+  const res = await fetch(targetUrl, {
     method: 'POST',
     headers: { ...headers, 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -127,7 +139,7 @@ export async function createRepository({ name, description = '', isPrivate = fal
 
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    throw new Error(`Failed to create repository ${name} (${res.status}): ${errData.message || res.statusText}`);
+    throw new Error(`Failed to create repository ${cleanName} (${res.status}): ${errData.message || res.statusText}`);
   }
 
   const data = await res.json();
@@ -149,17 +161,20 @@ export async function syncPortfolioToGithub({ owner, repo = 'career-portfolio', 
     throw new Error('GitHub token missing. Set GITHUB_TOKEN environment variable to sync portfolio.');
   }
 
-  let targetOwner = owner;
+  let targetOwner = owner ? String(owner).replace(/[^a-zA-Z0-9_-]/g, '') : '';
   if (!targetOwner) {
     const user = await getAuthenticatedUser(token);
     targetOwner = user.login;
   }
 
+  const cleanRepo = String(repo).replace(/[^a-zA-Z0-9_.-]/g, '');
+
   // Ensure repo exists or create it
   try {
-    const checkRes = await fetch(`https://api.github.com/repos/${targetOwner}/${repo}`, { headers: getGithubHeaders(token) });
+    const checkUrl = buildValidatedApiUrl(`/repos/${targetOwner}/${cleanRepo}`);
+    const checkRes = await fetch(checkUrl, { headers: getGithubHeaders(token) });
     if (checkRes.status === 404) {
-      await createRepository({ name: repo, description: 'Personal Career Portfolio & ATS Resume Hub', isPrivate: false, autoInit: true, token });
+      await createRepository({ name: cleanRepo, description: 'Personal Career Portfolio & ATS Resume Hub', isPrivate: false, autoInit: true, token });
     }
   } catch {}
 
@@ -168,7 +183,7 @@ export async function syncPortfolioToGithub({ owner, repo = 'career-portfolio', 
   if (resumeMarkdown) {
     const res = await pushFileToRepo({
       owner: targetOwner,
-      repo,
+      repo: cleanRepo,
       filePath: 'RESUME.md',
       content: resumeMarkdown,
       commitMessage: 'docs(career-agents): sync ATS resume',
@@ -180,7 +195,7 @@ export async function syncPortfolioToGithub({ owner, repo = 'career-portfolio', 
   if (coverLetterMarkdown) {
     const res = await pushFileToRepo({
       owner: targetOwner,
-      repo,
+      repo: cleanRepo,
       filePath: 'COVER_LETTER.md',
       content: coverLetterMarkdown,
       commitMessage: 'docs(career-agents): sync executive cover letter',
@@ -192,7 +207,7 @@ export async function syncPortfolioToGithub({ owner, repo = 'career-portfolio', 
   if (projectMarkdown) {
     const res = await pushFileToRepo({
       owner: targetOwner,
-      repo,
+      repo: cleanRepo,
       filePath: 'PORTFOLIO_PROJECTS.md',
       content: projectMarkdown,
       commitMessage: 'docs(career-agents): sync verified portfolio projects',
@@ -203,8 +218,8 @@ export async function syncPortfolioToGithub({ owner, repo = 'career-portfolio', 
 
   return {
     success: true,
-    repository: `${targetOwner}/${repo}`,
-    repoUrl: `https://github.com/${targetOwner}/${repo}`,
+    repository: `${targetOwner}/${cleanRepo}`,
+    repoUrl: `https://github.com/${targetOwner}/${cleanRepo}`,
     pushedCount: pushedFiles.length,
     files: pushedFiles
   };
@@ -217,15 +232,18 @@ export async function createIssue({ owner, repo, title, body = '', labels = [], 
   if (!token) {
     throw new Error('GitHub token missing. Set GITHUB_TOKEN environment variable.');
   }
+  const cleanOwner = String(owner).replace(/[^a-zA-Z0-9_-]/g, '');
+  const cleanRepo = String(repo).replace(/[^a-zA-Z0-9_.-]/g, '');
   const headers = getGithubHeaders(token);
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+  const targetUrl = buildValidatedApiUrl(`/repos/${cleanOwner}/${cleanRepo}/issues`);
+  const res = await fetch(targetUrl, {
     method: 'POST',
     headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, body, labels })
+    body: JSON.stringify({ title: String(title), body: String(body), labels })
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(`Failed to create issue in ${owner}/${repo}: ${err.message || res.statusText}`);
+    throw new Error(`Failed to create issue in ${cleanOwner}/${cleanRepo}: ${err.message || res.statusText}`);
   }
   const data = await res.json();
   return { success: true, issueNumber: data.number, htmlUrl: data.html_url };
@@ -238,15 +256,18 @@ export async function createPullRequest({ owner, repo, title, head, base = 'main
   if (!token) {
     throw new Error('GitHub token missing. Set GITHUB_TOKEN environment variable.');
   }
+  const cleanOwner = String(owner).replace(/[^a-zA-Z0-9_-]/g, '');
+  const cleanRepo = String(repo).replace(/[^a-zA-Z0-9_.-]/g, '');
   const headers = getGithubHeaders(token);
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
+  const targetUrl = buildValidatedApiUrl(`/repos/${cleanOwner}/${cleanRepo}/pulls`);
+  const res = await fetch(targetUrl, {
     method: 'POST',
     headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, head, base, body })
+    body: JSON.stringify({ title: String(title), head: String(head), base: String(base), body: String(body) })
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(`Failed to create PR in ${owner}/${repo}: ${err.message || res.statusText}`);
+    throw new Error(`Failed to create PR in ${cleanOwner}/${cleanRepo}: ${err.message || res.statusText}`);
   }
   const data = await res.json();
   return { success: true, prNumber: data.number, htmlUrl: data.html_url };

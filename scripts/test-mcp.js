@@ -366,9 +366,13 @@ async function runTests() {
     const sJobsParsed = JSON.parse(sJobsRes.result?.content?.[0]?.text || '{}');
     assertTest('Tool: search_jobs', Array.isArray(sJobsParsed.jobs) && sJobsParsed.jobs.length > 0);
 
-    // career_pipeline_track add: updates keep untouched fields, notes are stored
     const trackerPath = path.join(root, 'pipeline-tracker.md');
-    const originalTracker = fs.existsSync(trackerPath) ? fs.readFileSync(trackerPath, 'utf8') : null;
+    let originalTracker = null;
+    try {
+      originalTracker = fs.readFileSync(trackerPath, 'utf8');
+    } catch (_) {
+      originalTracker = null;
+    }
     try {
       fs.writeFileSync(trackerPath, [
         '# Job Application Pipeline Tracker',
