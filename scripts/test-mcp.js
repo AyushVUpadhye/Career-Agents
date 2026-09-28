@@ -566,6 +566,30 @@ async function runTests() {
       ghSyncRes.error ? ghSyncRes.error.message : ''
     );
 
+    // 31. generate_star_bank test
+    console.log('Calling generate_star_bank...');
+    const starRes = await sendRequest('tools/call', {
+      name: 'generate_star_bank',
+      arguments: { company: 'amazon', role: 'Senior SDE' }
+    });
+    const starParsed = JSON.parse(starRes.result?.content?.[0]?.text || '{}');
+    assertTest('Tool: generate_star_bank',
+      !starRes.error && starParsed.company === 'amazon' && Array.isArray(starParsed.scenarios) && starParsed.scenarios.length > 0,
+      starRes.error ? starRes.error.message : ''
+    );
+
+    // 32. resume_keyword_heatmap test
+    console.log('Calling resume_keyword_heatmap...');
+    const heatmapRes = await sendRequest('tools/call', {
+      name: 'resume_keyword_heatmap',
+      arguments: { resumeText: 'Python, PyTorch, React, Docker', jobDescription: 'Looking for Python, PyTorch, AWS, Docker and Kubernetes skills.' }
+    });
+    const heatmapParsed = JSON.parse(heatmapRes.result?.content?.[0]?.text || '{}');
+    assertTest('Tool: resume_keyword_heatmap',
+      !heatmapRes.error && typeof heatmapParsed.coveragePercent === 'number' && Array.isArray(heatmapParsed.matchedKeywords),
+      heatmapRes.error ? heatmapRes.error.message : ''
+    );
+
   } catch (err) {
     console.error('Test Execution Error:', err);
     report.push(`\n**Execution Error:** ${err.message}`);

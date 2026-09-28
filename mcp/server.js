@@ -8,6 +8,8 @@ import exceljs from 'exceljs';
 import { calculateReadiness } from '../services/readiness.js';
 import { ApplicationTracker, ATSScanner, PipelineAnalytics, InterviewCoach } from '../packages/pipeline/index.js';
 import githubApi from '../packages/github/api-client.js';
+import { generateStarMatrix } from '../packages/interview/star-generator.js';
+import { generateKeywordHeatmap } from '../packages/resume/heatmap.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -847,6 +849,29 @@ const MCP_TOOLS = [
         body: { type: 'string', description: 'Pull request body markdown' }
       },
       required: ['owner', 'repo', 'title', 'head']
+    }
+  },
+  {
+    name: 'generate_star_bank',
+    description: 'Generate structured Situation-Task-Action-Result interview story matrices for target companies and engineering roles.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        company: { type: 'string', description: 'Target company (e.g. google, amazon, meta, stripe)' },
+        role: { type: 'string', description: 'Target role title (default: Software Engineer)' }
+      }
+    }
+  },
+  {
+    name: 'resume_keyword_heatmap',
+    description: 'Calculate ATS keyword coverage density percentages and missing skill clusters against a target job description.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        resumeText: { type: 'string', description: 'Plain text or markdown resume content' },
+        jobDescription: { type: 'string', description: 'Target job description text' }
+      },
+      required: ['resumeText', 'jobDescription']
     }
   }
 ];
@@ -2647,6 +2672,30 @@ async function handleToolsCall(id, params) {
       case 'github_create_pr': {
         const { owner, repo, title, head, base, body } = toolArgs;
         const res = await githubApi.createPullRequest({ owner, repo, title, head, base, body });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'generate_star_bank': {
+        const { company, role } = toolArgs;
+        const res = generateStarMatrix(company, role);
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'resume_keyword_heatmap': {
+        const { resumeText, jobDescription } = toolArgs;
+        const res = generateKeywordHeatmap(resumeText, jobDescription);
         sendResult(id, {
           content: [{
             type: 'text',
