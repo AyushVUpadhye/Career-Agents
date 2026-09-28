@@ -20,6 +20,11 @@ export function useVoiceRecognition({
   const [permissionGranted, setPermissionGranted] = useState(false);
   const recognitionRef = useRef<any>(null);
 
+  const isListeningRef = useRef(false);
+  useEffect(() => {
+    isListeningRef.current = isListening;
+  }, [isListening]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -46,10 +51,10 @@ export function useVoiceRecognition({
 
           if (errorType === "not-allowed" || errorType === "service-not-allowed") {
             setPermissionGranted(false);
-            if (isListening) {
+            if (isListeningRef.current) {
               toast.info("Microphone access denied. Switched to Text Mode.");
             }
-          } else if (errorType !== "no-speech" && isListening) {
+          } else if (errorType !== "no-speech" && isListeningRef.current) {
             toast.error(`Microphone notice: ${errorType}`);
           }
 
