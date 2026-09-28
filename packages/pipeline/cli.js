@@ -73,19 +73,27 @@ export async function runCareerPipelineCLI(subcommand, args = []) {
     }
 
     case 'status': {
-      const [company, newStatus, ...notes] = args;
+      const roleIdx = args.indexOf('--role');
+      const role = roleIdx !== -1 ? args[roleIdx + 1] || '' : '';
+      const positional = roleIdx !== -1 ? args.filter((_, i) => i !== roleIdx && i !== roleIdx + 1) : args;
+      const [company, newStatus, ...notes] = positional;
       if (!company || !newStatus) {
-        console.log(`\n${c.yellow}Usage: career-agents pipeline status <company> <new-status> [notes]${c.reset}\n`);
+        console.log(`\n${c.yellow}Usage: career-agents pipeline status <company> <new-status> [notes] [--role <role>]${c.reset}\n`);
         return;
       }
       const tracker = ApplicationTracker.load(trackerPath);
-      const updated = tracker.updateStatus(company, newStatus, notes.join(' '));
+      const updated = tracker.updateStatus(company, newStatus, notes.join(' '), role);
       if (!updated) {
-        console.log(`\n${c.yellow}No application found for company '${company}'.${c.reset}\n`);
+        const roles = tracker.entries.filter(e => e.company.toLowerCase().trim() === company.toLowerCase().trim()).map(e => e.role);
+        if (!role && roles.length > 1) {
+          console.log(`\n${c.yellow}Multiple applications found for '${company}' (${roles.join(', ')}). Specify one with --role "<role>".${c.reset}\n`);
+        } else {
+          console.log(`\n${c.yellow}No application found for company '${company}'${role ? ` with role '${role}'` : ''}.${c.reset}\n`);
+        }
         return;
       }
       tracker.save(trackerPath);
-      console.log(`\n${c.green}✓ Updated application status:${c.reset} ${updated.company} → ${updated.status}\n`);
+      console.log(`\n${c.green}✓ Updated application status:${c.reset} ${updated.company} (${updated.role}) → ${updated.status}\n`);
       break;
     }
 
@@ -312,7 +320,7 @@ ${c.bold}Usage:${c.reset}
 ${c.bold}Application Tracking & Pipeline:${c.reset}
   ${c.green}tracker${c.reset}         Display live application pipeline statuses
   ${c.green}add${c.reset}             Add new target job entry to application tracker
-  ${c.green}status${c.reset}          Update application status (applied, interview, offer, etc.)
+  ${c.green}status${c.reset}          Update application status (applied, interview, offer, etc.); --role picks one of several roles
   ${c.green}stats${c.reset}           Display pipeline funnel performance statistics
 
 ${c.bold}ATS Portals & Discovery:${c.reset}

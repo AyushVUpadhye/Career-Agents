@@ -115,8 +115,15 @@ export class ApplicationTracker {
     return clean;
   }
 
-  updateStatus(company, status, notes = '') {
-    const target = this.entries.find(e => e.company.toLowerCase().trim() === company.toLowerCase().trim());
+  /**
+   * Update the status of one application. Applications are identified by company + role
+   * (as in addEntry); without a role, the company must have exactly one application.
+   */
+  updateStatus(company, status, notes = '', role = '') {
+    const sameCompany = this.entries.filter(e => e.company.toLowerCase().trim() === company.toLowerCase().trim());
+    const target = role
+      ? sameCompany.find(e => e.role.toLowerCase().trim() === role.toLowerCase().trim())
+      : (sameCompany.length === 1 ? sameCompany[0] : null);
     if (target) {
       target.status = status.toLowerCase();
       if (notes) {
