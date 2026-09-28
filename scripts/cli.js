@@ -1141,7 +1141,7 @@ async function main() {
         return;
       }
       const { runGithubCLI } = await import('../packages/github/analyzer.js');
-      await runGithubCLI(args[1]);
+      await runGithubCLI(args[1], ...args.slice(2));
       break;
     }
     case 'linkedin': {

@@ -7,6 +7,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import exceljs from 'exceljs';
 import { calculateReadiness } from '../services/readiness.js';
 import { ApplicationTracker, ATSScanner, PipelineAnalytics, InterviewCoach } from '../packages/pipeline/index.js';
+import githubApi from '../packages/github/api-client.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -771,6 +772,81 @@ const MCP_TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {}
+    }
+  },
+  {
+    name: 'github_push_file',
+    description: 'Directly commit and push a file (Resume, Cover Letter, README, or Code) to a GitHub repository branch using the GitHub REST API.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string', description: 'GitHub username or organization' },
+        repo: { type: 'string', description: 'Repository name' },
+        filePath: { type: 'string', description: 'Target file path in repository (e.g. RESUME.md, docs/portfolio.md)' },
+        content: { type: 'string', description: 'File UTF-8 content to commit' },
+        commitMessage: { type: 'string', description: 'Git commit message' },
+        branch: { type: 'string', description: 'Target git branch (default: main)' }
+      },
+      required: ['owner', 'repo', 'filePath', 'content']
+    }
+  },
+  {
+    name: 'github_create_repo',
+    description: 'Create a new repository on GitHub for a career portfolio, project skeleton, or code sandbox.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Repository name' },
+        description: { type: 'string', description: 'Repository description' },
+        isPrivate: { type: 'boolean', description: 'Whether the repository is private (default: false)' },
+        autoInit: { type: 'boolean', description: 'Initialize with README (default: true)' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'github_sync_portfolio',
+    description: 'Sync ATS resume, cover letter, and portfolio projects directly into a GitHub portfolio repository.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string', description: 'GitHub owner username (optional, defaults to authenticated user)' },
+        repo: { type: 'string', description: 'Portfolio repository name (default: career-portfolio)' },
+        resumeMarkdown: { type: 'string', description: 'ATS single-page resume markdown text' },
+        coverLetterMarkdown: { type: 'string', description: 'Tailored cover letter markdown text' },
+        projectMarkdown: { type: 'string', description: 'Portfolio project case studies markdown text' }
+      }
+    }
+  },
+  {
+    name: 'github_create_issue',
+    description: 'Create a new issue on a GitHub repository.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string', description: 'Repository owner' },
+        repo: { type: 'string', description: 'Repository name' },
+        title: { type: 'string', description: 'Issue title' },
+        body: { type: 'string', description: 'Issue description markdown body' },
+        labels: { type: 'array', items: { type: 'string' }, description: 'Issue labels' }
+      },
+      required: ['owner', 'repo', 'title']
+    }
+  },
+  {
+    name: 'github_create_pr',
+    description: 'Create a Pull Request on a GitHub repository.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        owner: { type: 'string', description: 'Repository owner' },
+        repo: { type: 'string', description: 'Repository name' },
+        title: { type: 'string', description: 'Pull request title' },
+        head: { type: 'string', description: 'Branch containing your changes' },
+        base: { type: 'string', description: 'Branch you want to merge into (default: main)' },
+        body: { type: 'string', description: 'Pull request body markdown' }
+      },
+      required: ['owner', 'repo', 'title', 'head']
     }
   }
 ];
@@ -2515,6 +2591,66 @@ async function handleToolsCall(id, params) {
           content: [{
             type: 'text',
             text: JSON.stringify(stats, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'github_push_file': {
+        const { owner, repo, filePath, content, commitMessage, branch } = toolArgs;
+        const res = await githubApi.pushFileToRepo({ owner, repo, filePath, content, commitMessage, branch });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'github_create_repo': {
+        const { name, description, isPrivate, autoInit } = toolArgs;
+        const res = await githubApi.createRepository({ name, description, isPrivate, autoInit });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'github_sync_portfolio': {
+        const { owner, repo, resumeMarkdown, coverLetterMarkdown, projectMarkdown } = toolArgs;
+        const res = await githubApi.syncPortfolioToGithub({ owner, repo, resumeMarkdown, coverLetterMarkdown, projectMarkdown });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'github_create_issue': {
+        const { owner, repo, title, body, labels } = toolArgs;
+        const res = await githubApi.createIssue({ owner, repo, title, body, labels });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
+          }]
+        });
+        break;
+      }
+
+      case 'github_create_pr': {
+        const { owner, repo, title, head, base, body } = toolArgs;
+        const res = await githubApi.createPullRequest({ owner, repo, title, head, base, body });
+        sendResult(id, {
+          content: [{
+            type: 'text',
+            text: JSON.stringify(res, null, 2)
           }]
         });
         break;

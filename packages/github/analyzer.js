@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getGithubHeaders } from './api-client.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +17,7 @@ export async function analyzeGithubProfile(username) {
   let rateLimited = false;
 
   try {
-    const headers = { 'User-Agent': 'CareerAgentsOS-CLI' };
+    const headers = getGithubHeaders();
     const userRes = await fetch(`https://api.github.com/users/${username}`, { headers });
     if (userRes.ok) {
       profile = await userRes.json();
@@ -130,7 +131,7 @@ export async function analyzeGithubProfile(username) {
   };
 }
 
-export async function runGithubCLI(username) {
+export async function runGithubCLI(subcommandOrUser, ...extraArgs) {
   const c = {
     reset: '\x1b[0m',
     bold: '\x1b[1m',
@@ -140,6 +141,63 @@ export async function runGithubCLI(username) {
     red: '\x1b[31m',
     gray: '\x1b[90m'
   };
+
+  if (subcommandOrUser === 'push') {
+    const targetRepo = extraArgs[0];
+    const filePath = extraArgs[1];
+    const localPathOrContent = extraArgs[2];
+    const commitMessage = extraArgs[3] || `feat(career-agents): update ${filePath}`;
+
+    if (!targetRepo || !filePath || !localPathOrContent) {
+      console.log(`\nUsage: career-agents github push <owner/repo> <targetPath> <fileOrContent> [commitMsg]\n`);
+      return;
+    }
+    const parts = targetRepo.split('/');
+    if (parts.length < 2) {
+      console.error(`${c.red}Error: Target repo must be formatted as owner/repo.${c.reset}`);
+      return;
+    }
+    let content = localPathOrContent;
+    if (fs.existsSync(localPathOrContent)) {
+      content = fs.readFileSync(localPathOrContent, 'utf8');
+    }
+    try {
+      const { pushFileToRepo } = await import('./api-client.js');
+      console.log(`${c.cyan}Pushing ${filePath} to GitHub repository ${targetRepo}...${c.reset}`);
+      const res = await pushFileToRepo({ owner: parts[0], repo: parts[1], filePath, content, commitMessage });
+      console.log(`${c.green}[Success] ${res.action} ${res.path} on ${targetRepo}!${c.reset}`);
+      console.log(`Commit SHA: ${c.gray}${res.commitSha}${c.reset}`);
+      if (res.contentUrl) console.log(`URL       : ${c.bold}${res.contentUrl}${c.reset}`);
+    } catch (err) {
+      console.error(`${c.red}GitHub Push Error: ${err.message}${c.reset}`);
+    }
+    return;
+  }
+
+  if (subcommandOrUser === 'sync') {
+    const repo = extraArgs[0] || 'career-portfolio';
+    try {
+      const { syncPortfolioToGithub } = await import('./api-client.js');
+      console.log(`${c.cyan}Syncing career portfolio to GitHub repository '${repo}'...${c.reset}`);
+      const trackerPath = path.join(root, 'pipeline-tracker.md');
+      let resumeMd = '';
+      if (fs.existsSync(trackerPath)) {
+        resumeMd = fs.readFileSync(trackerPath, 'utf8');
+      }
+      const res = await syncPortfolioToGithub({ repo, resumeMarkdown: resumeMd || '# Career Portfolio\nSynced by Career-Agents' });
+      console.log(`${c.green}[Success] Synced portfolio to ${res.repository}!${c.reset}`);
+      console.log(`URL: ${c.bold}${res.repoUrl}${c.reset}`);
+    } catch (err) {
+      console.error(`${c.red}GitHub Sync Error: ${err.message}${c.reset}`);
+    }
+    return;
+  }
+
+  const username = subcommandOrUser;
+  if (!username) {
+    console.error(`${c.red}Usage: career-agents github <username> | push | sync${c.reset}`);
+    return;
+  }
 
   try {
     console.log(`${c.cyan}Analyzing GitHub profile for: ${c.bold}${username}${c.reset}...`);

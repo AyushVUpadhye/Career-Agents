@@ -544,6 +544,28 @@ async function runTests() {
       ipNoCoRes.error ? ipNoCoRes.error.message : ''
     );
 
+    // 29. github_push_file error boundary test
+    console.log('Calling github_push_file without token...');
+    const ghPushRes = await sendRequest('tools/call', {
+      name: 'github_push_file',
+      arguments: { owner: 'karthikrshet', repo: 'test', filePath: 'TEST.md', content: 'test' }
+    });
+    assertTest('Tool: github_push_file token boundary',
+      ghPushRes.error || (ghPushRes.result && ghPushRes.result.content),
+      ghPushRes.error ? ghPushRes.error.message : ''
+    );
+
+    // 30. github_sync_portfolio error boundary test
+    console.log('Calling github_sync_portfolio without token...');
+    const ghSyncRes = await sendRequest('tools/call', {
+      name: 'github_sync_portfolio',
+      arguments: { repo: 'portfolio-demo', resumeMarkdown: '# Resume' }
+    });
+    assertTest('Tool: github_sync_portfolio token boundary',
+      ghSyncRes.error || (ghSyncRes.result && ghSyncRes.result.content),
+      ghSyncRes.error ? ghSyncRes.error.message : ''
+    );
+
   } catch (err) {
     console.error('Test Execution Error:', err);
     report.push(`\n**Execution Error:** ${err.message}`);

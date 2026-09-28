@@ -1,10 +1,10 @@
 # MCP Test Report
-Generated: 2026-09-28T17:57:32.644Z
+Generated: 2026-09-28T19:07:55.364Z
 
 ## Test Cases
 
 - **[PASS]** Initialize Handshake 
-- **[PASS]** Tools Listing (Found 37 tools)
+- **[PASS]** Tools Listing (Found 42 tools)
 - **[PASS]** Tool: search_agents 
 - **[PASS]** Tool: search_agents fuzzy equivalency 
 - **[PASS]** Tool: recommend_agents 
@@ -45,8 +45,10 @@ Generated: 2026-09-28T17:57:32.644Z
 - **[PASS]** Tool: company_dossier unknown company fallback 
 - **[PASS]** Tool: interview_plan 
 - **[PASS]** Tool: interview_plan without company 
+- **[PASS]** Tool: github_push_file token boundary (Execution error: GitHub token missing. Set GITHUB_TOKEN environment variable to execute direct repository commits.)
+- **[PASS]** Tool: github_sync_portfolio token boundary (Execution error: GitHub token missing. Set GITHUB_TOKEN environment variable to sync portfolio.)
 
 ## Summary
-- **Total tests**: 42
-- **Passed tests**: 42
+- **Total tests**: 44
+- **Passed tests**: 44
 - **Failed tests**: 0
