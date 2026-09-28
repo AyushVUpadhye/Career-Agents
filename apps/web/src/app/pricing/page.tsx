@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, CheckCircle2, Zap, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import PricingCards from "@/components/ui/pricing-02";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
@@ -83,9 +84,6 @@ export default function PricingPage() {
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-sky-400 text-xs font-mono font-medium">
-            Transparent Pricing
-          </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
             Transparent Plans for <span className="text-sky-400">Engineering Careers</span>
           </h1>
@@ -136,86 +134,20 @@ export default function PricingPage() {
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-          {plans.map((plan) => {
-            const isPopular = plan.popular;
-            const price =
-              typeof plan.price === "string"
-                ? plan.price
-                : currency === "usd"
-                ? `$${plan.price[billingCycle].usd}`
-                : `₹${plan.price[billingCycle].inr}`;
-
-            return (
-              <div
-                key={plan.id}
-                className={`p-6 rounded-2xl bg-[#070b14] flex flex-col justify-between transition-all border ${
-                  isPopular
-                    ? "border-sky-500/60 shadow-[0_0_30px_rgba(14,165,233,0.15)]"
-                    : "border-white/10 hover:border-white/20"
-                }`}
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base font-bold text-white">{plan.name}</h3>
-                    {isPopular && (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-sky-500/10 text-sky-400 border border-sky-400/30">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="text-3xl font-black text-white font-mono">{price}</div>
-                    {typeof plan.price !== "string" && (
-                      <div className="text-xs text-slate-400 font-mono mt-0.5">
-                        per user / {billingCycle === "monthly" ? "month" : "year"}
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-slate-400 font-normal leading-relaxed">
-                    {plan.desc}
-                  </p>
-
-                  {/* Feature Checklist */}
-                  <div className="pt-2 border-t border-white/10 space-y-2 text-xs">
-                    {plan.features.map((feat) => (
-                      <div key={feat} className="flex items-start gap-2 text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-6">
-                  <Link href="/dashboard">
-                    <Button
-                      size="sm"
-                      className={`w-full text-xs font-semibold py-2 rounded-lg transition-all ${
-                        isPopular
-                          ? "bg-sky-500 hover:bg-sky-400 text-black shadow-sm"
-                          : "bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/10"
-                      }`}
-                    >
-                      <span>{plan.id === "free" ? "Start Free" : "Get Started"}</span>
-                      <ArrowRight className="w-3 h-3 ml-1" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <PricingCards plans={plans} billingCycle={billingCycle} currency={currency} />
 
         {/* Security Assurance */}
-        <div className="p-6 rounded-2xl bg-[#070b14] border border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-400">
-          <div className="flex items-center gap-2 text-white font-medium">
-            <ShieldCheck className="w-4 h-4 text-sky-400" />
-            <span>Local-first architecture guarantee: Your resumes are never sold or trained upon.</span>
-          </div>
-          <div>Cancel or switch plans anytime with single-click billing management.</div>
+        <div className="flex justify-start pt-4 pb-8">
+          <ul className="flex flex-col gap-3 text-xs sm:text-sm font-mono text-slate-400">
+            <li className="flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-sky-500 shrink-0" />
+              <span>Local-first architecture guarantee: Your resumes are never sold or trained upon.</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-sky-500 shrink-0" />
+              <span>Cancel or switch plans anytime with single-click billing management.</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
