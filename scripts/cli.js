@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 
 import { executeAgent } from '../packages/core/executor.js';
 import { recommendProfile } from '../packages/core/recommender.js';
+import { resolvePython } from './resolve-python.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -742,8 +743,12 @@ function runDoctor() {
 
   console.log(`\n${c.bold}[3/3] Checking environment runtime variables...${c.reset}`);
   const validateScript = path.join(root, 'scripts', 'validate.py');
-  if (fs.existsSync(validateScript)) {
-    const result = spawnSync('python', [validateScript]);
+  const python = resolvePython();
+  if (fs.existsSync(validateScript) && !python) {
+    console.log(`  [${c.red}x FAIL${c.reset}] Python 3 not found (tried python3, python); cannot run validate.py.`);
+    errors++;
+  } else if (fs.existsSync(validateScript)) {
+    const result = spawnSync(python, [validateScript]);
     if (result.status === 0) {
       console.log(`  [${c.green}✓ PASS${c.reset}] validate.py checks pass.`);
     } else {
@@ -764,8 +769,11 @@ function runDoctor() {
 function runUpdate() {
   console.log(`${c.purple}Running registry compiler...${c.reset}`);
   const genScript = path.join(root, 'scripts', 'generate-data.py');
-  if (fs.existsSync(genScript)) {
-    const res = spawnSync('python', [genScript], { stdio: 'inherit' });
+  const python = resolvePython();
+  if (fs.existsSync(genScript) && !python) {
+    console.error(`${c.red}Python 3 not found (tried python3, python); cannot run generate-data.py.${c.reset}`);
+  } else if (fs.existsSync(genScript)) {
+    const res = spawnSync(python, [genScript], { stdio: 'inherit' });
     if (res.status === 0) {
       console.log(`${c.green}System indices and master configuration successfully updated.${c.reset}`);
     } else {
