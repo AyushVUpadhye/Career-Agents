@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Bookmark, BookmarkCheck, ExternalLink, Filter,
@@ -126,7 +126,7 @@ export default function JobsPage() {
   const [tailorModalJob, setTailorModalJob] = useState<JobListing | null>(null);
   const [generated, setGenerated] = useState<{ type: string; content: string } | null>(null);
 
-  const fetchLiveJobs = async () => {
+  const fetchLiveJobs = useCallback(async () => {
     setLoadingJobs(true);
     try {
       const params = new URLSearchParams();
@@ -158,11 +158,11 @@ export default function JobsPage() {
     } finally {
       setLoadingJobs(false);
     }
-  };
+  }, [query, countryFilter, domainFilter, expFilter, typeFilter, visaFilter, resumeAnalysis, selectedJob]);
 
   useEffect(() => {
     fetchLiveJobs();
-  }, [countryFilter, domainFilter, expFilter, typeFilter, visaFilter, resumeAnalysis]);
+  }, [fetchLiveJobs]);
 
   function toggleBookmark(id: string) {
     setBookmarks(prev => {

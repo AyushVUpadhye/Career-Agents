@@ -298,7 +298,7 @@ export default function CurvedInput({
       setScrollLen(next);
     }
     setCaretU(layout.textStartU + (caretLen - next) * geom.uPerLen);
-  });
+  }, [geom, layout, caretIndex, display.length]);
 
   const commitValue = (v: string) => {
     if (value === undefined) setInnerValue(v);

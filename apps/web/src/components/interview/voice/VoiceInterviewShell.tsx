@@ -49,9 +49,17 @@ export function VoiceInterviewShell({ initialSessionId }: VoiceInterviewShellPro
   useEffect(() => {
     setMounted(true);
   }, []);
-  // Auto-load or auto-start session if initialSessionId URL param is present
+  // Auto-load or auto-start session if initialSessionId URL param is present.
+  // NOTE: This effect intentionally uses a minimal dependency array [initialSessionId, mounted].
+  // It acts as a one-shot initialiser that must only run when the component mounts with a session
+  // ID or when the mount flag flips. The variables it reads (interviewSessions, language,
+  // durationMinutes, selectedAgent, startSession) are declared further down in the component body;
+  // adding them to the deps array causes TypeScript "used before declaration" errors due to the
+  // pre-existing hook ordering in this file. fsmState is read safely via fsmStateRef.current
+  // (kept in sync by a dedicated effect below) to avoid re-triggering on every FSM transition.
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    if (initialSessionId && mounted && fsmState === "CONFIGURING") {
+    if (initialSessionId && mounted && fsmStateRef.current === "CONFIGURING") {
       const existing = interviewSessions.find((s) => s.id === initialSessionId);
       if (existing && existing.scorecard) {
         setCompletedSessionData({
@@ -81,6 +89,7 @@ export function VoiceInterviewShell({ initialSessionId }: VoiceInterviewShellPro
       }
     }
   }, [initialSessionId, mounted]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const interviewSessions = useStore((s) => s.interviewSessions);
   const addInterviewSession = useStore((s) => s.addInterviewSession);
