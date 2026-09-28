@@ -220,9 +220,11 @@ function detectWeakBullets(lines: string[]): WeakBullet[] {
 }
 
 function detectKeywords(text: string, keywordList: string[]): { found: string[]; missing: string[]; totalKeywords: number } {
-  const found = keywordList.filter((kw) =>
-    new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text)
-  );
+  const found = keywordList.filter((kw) => {
+    const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp(`(?<![A-Za-z0-9#+.])${escaped}(?![A-Za-z0-9#+.])`, "i");
+    return pattern.test(text);
+  });
   const allMissing = keywordList.filter((kw) => !found.includes(kw));
   const missing = allMissing.slice(0, 8);
   return { found, missing, totalKeywords: keywordList.length };
@@ -231,11 +233,11 @@ function detectKeywords(text: string, keywordList: string[]): { found: string[];
 function detectSections(text: string) {
   const lower = text.toLowerCase();
   return {
-    hasExperience: /experience|work history|employment|career background|positions held/i.test(lower),
-    hasEducation: /education|university|college|degree|bachelor|master|phd|academic|certifications?/i.test(lower),
-    hasSkills: /skills|technologies|tech stack|proficient|competencies|expertise|tools|domain knowledge/i.test(lower),
-    hasProjects: /projects?|portfolio|built|developed|achievements|key builds|case studies/i.test(lower),
-    hasSummary: /summary|objective|profile|about|bio|executive summary|overview/i.test(lower),
+    hasExperience: /experience|work history|employment|career background|positions held|work|professional experience/i.test(lower),
+    hasEducation: /education|university|college|degree|bachelor|master|phd|academic|certifications?|school/i.test(lower),
+    hasSkills: /skills|technologies|tech stack|proficient|competencies|expertise|tools|domain knowledge|core competencies|technical skills/i.test(lower),
+    hasProjects: /projects?|portfolio|built|developed|achievements|key builds|case studies|engineering|projects/i.test(lower),
+    hasSummary: /summary|objective|profile|about|bio|executive summary|overview|headline/i.test(lower),
   };
 }
 

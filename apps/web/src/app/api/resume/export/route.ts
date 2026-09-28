@@ -265,7 +265,7 @@ function generateSimplePdf(title: string, lines: string[]): Buffer {
   }
   streamContent += "ET";
 
-  addObj(`<< /Length ${streamContent.length} >>\nstream\n${streamContent}\nstreamend\nendstream`);
+  addObj(`<< /Length ${streamContent.length} >>\nstream\n${streamContent}\nendstream`);
 
   const xrefOffset = chunks.join("").length;
   let xref = `xref\n0 ${objectOffsets.length + 1}\n0000000000 65535 f \n`;

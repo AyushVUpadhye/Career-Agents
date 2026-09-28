@@ -150,18 +150,27 @@ export default function ResumePage() {
     setAnalyzing(true);
     try {
       const username = profile?.githubUsername || "candidate";
-      const sampleResume = `# Profile: ${profile?.name || "Senior Engineer"}
-GitHub: https://github.com/${username}
-Target Role: ${targetRole}
+      const sampleResume = `# Executive Profile: ${profile?.name || "Senior Software Engineer"}
+Email: ${profile?.email || "candidate@engineer.dev"} | Phone: +1 (555) 234-5678 | GitHub: github.com/${username}
 
-## Core Technical Competencies
-TypeScript, Next.js, Python, PostgreSQL, Redis, Docker, Kubernetes, AWS, GraphQL, System Design.
+## Executive Summary
+Senior Software Engineer with 6+ years of experience architecting high-scale distributed systems and cloud infrastructure. Proven track record of reducing P99 latency by 42% and scaling microservices.
+
+## Technical Skills & Core Competencies
+TypeScript, JavaScript, Python, Next.js, React, Node.js, PostgreSQL, Redis, Docker, Kubernetes, AWS, GraphQL, REST API, System Design, CI/CD.
 
 ## Professional Experience
-Senior Software Engineer (2022 — Present)
-- Architected and shipped distributed microservices in Go & TypeScript, reducing P99 latency by 42% for 15M+ daily requests.
-- Overhauled database indexing on a 500M-row PostgreSQL cluster, slashing infrastructure costs by $55,000/year.
-- Led squad of 5 engineers delivering core payment gateway integrations with 99.99% uptime.
+Senior Software Engineer — Apex Cloud Systems (2022 — Present)
+- Architected and deployed high-throughput event processing pipelines using Go and Kafka, processing 15M+ daily events with 99.99% service availability.
+- Overhauled database query indexing on a 500M-row PostgreSQL cluster, slashing infrastructure costs by $55,000/year and reducing P99 API response times by 42%.
+- Led a squad of 5 engineers delivering core microservices architecture on Kubernetes with automated CI/CD canary deployments.
+
+## Education & Academic Background
+University of California, Berkeley — B.S. in Computer Science & Engineering (2016 — 2020)
+
+## Key Engineering Projects
+Career-Agents Intelligence Platform (TypeScript, Next.js, Python, OpenAI, Redis)
+- Built multi-agent copilot orchestrating 167 AI agent personas with real-time ATS resume scoring and automated recruiter outreach.
 `;
       await processText(sampleResume, `github-${username}-portfolio.md`);
     } catch (err) {
@@ -175,14 +184,27 @@ Senior Software Engineer (2022 — Present)
     setStep("analyzing");
     setAnalyzing(true);
     try {
-      const sampleResume = `# Profile: ${profile?.name || "Engineering Leader"}
-Headline: Senior Software Engineer | Distributed Systems & Cloud Architecture
-Target Role: ${targetRole}
+      const sampleResume = `# Executive Profile: ${profile?.name || "Engineering Leader"}
+Email: ${profile?.email || "candidate@engineer.dev"} | Phone: +1 (555) 234-5678 | LinkedIn: linkedin.com/in/candidate
 
-## Experience
-Senior Full Stack Engineer
-- Spearheaded development of enterprise web application in React and Node.js, accelerating release velocity by 35%.
-- Implemented multi-tier caching layer using Redis and CDN edge invalidation, achieving sub-20ms latency.
+## Executive Summary
+Senior Full Stack Engineer with expertise in building responsive web applications, scalable REST APIs, and microservices architecture. Skilled in TypeScript, React, Node.js, and cloud deployments.
+
+## Technical Skills & Core Competencies
+TypeScript, React, Next.js, Node.js, Python, PostgreSQL, Redis, AWS, Docker, GraphQL, REST API, Tailwind CSS, System Design, Web Vitals.
+
+## Professional Experience
+Senior Full Stack Engineer — Nexus Technologies (2020 — Present)
+- Spearheaded development of enterprise web application in React and Node.js, accelerating release velocity by 35% across 120k+ active users.
+- Implemented multi-tier caching layer using Redis and CDN edge invalidation, achieving sub-20ms average response time globally.
+- Reduced initial page render time by 50% by optimizing Web Vitals and bundling efficiency.
+
+## Education & Academic Background
+Stanford University — B.S. in Software Engineering (2016 — 2020)
+
+## Key Engineering Projects
+Enterprise Analytics Dashboard (TypeScript, React, Node.js, PostgreSQL)
+- Developed real-time streaming analytics dashboard monitoring infrastructure metrics and system health.
 `;
       await processText(sampleResume, "linkedin-profile.md");
     } catch (err) {
@@ -302,6 +324,51 @@ Senior Full Stack Engineer
 
   const analysis = resumeAnalysis;
 
+  const previewData = analysis ? {
+    name: profile?.name || analysis.rawText?.split("\n").map(l => l.trim()).find(l => l.length > 0 && l.length < 40 && !l.startsWith("#") && !l.includes(":") && !l.includes("@")) || "Alex Morgan",
+    email: analysis.rawText?.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/)?.[0] || profile?.email || "alex.morgan@engineer.dev",
+    phone: analysis.rawText?.match(/\+?\d[\d\s-]{8,14}\d/)?.[0]?.trim() || "+1 (555) 234-5678",
+    location: "San Francisco, CA",
+    linkedin: analysis.rawText?.match(/linkedin\.com\/in\/[\w-]+/i)?.[0] || profile?.linkedinUrl || "linkedin.com/in/alex-morgan",
+    github: analysis.rawText?.match(/github\.com\/[\w-]+/i)?.[0] || (profile?.githubUsername ? `github.com/${profile.githubUsername}` : "github.com/alexmorgan-dev"),
+    targetRole: analysis.targetRoleName || profile?.targetRole || "Senior Software Engineer",
+    summary: `Senior ${analysis.targetRoleName || "Software Engineer"} with proven track record of architecting distributed systems, improving release velocity, and scaling cloud infrastructure.`,
+    skills: analysis.detectedKeywords && analysis.detectedKeywords.length > 0
+      ? analysis.detectedKeywords
+      : ["TypeScript", "Next.js", "Go", "Python", "PostgreSQL", "Redis", "Kafka", "Docker", "Kubernetes", "AWS"],
+    experience: [
+      {
+        company: "Apex Cloud Systems",
+        role: analysis.targetRoleName || "Senior Software Engineer",
+        period: "2022 — Present",
+        location: "San Francisco, CA",
+        bullets: analysis.starAnalysis && analysis.starAnalysis.length > 0
+          ? analysis.starAnalysis.map((s) => s.bullet)
+          : [
+              "Architected and deployed high-throughput event processing pipelines using Go and Kafka, processing 15M+ daily events with 99.99% service availability.",
+              "Overhauled database query indexing on a 500M+ row PostgreSQL cluster, cutting P99 API response times by 42% and reducing compute costs by $55,000/yr.",
+              "Led a squad of 5 engineers delivering core microservices architecture on Kubernetes with automated CI/CD canary deployments.",
+            ],
+      },
+    ],
+    education: [
+      {
+        school: "University of California, Berkeley",
+        degree: "B.S. in Computer Science & Engineering",
+        year: "2016 — 2020",
+      },
+    ],
+    projects: [
+      {
+        name: `${analysis.targetRoleName || "Software"} Intelligence Platform`,
+        tech: (analysis.detectedKeywords || ["TypeScript", "Next.js", "Python"]).slice(0, 5).join(", "),
+        bullets: [
+          "Built multi-agent copilot orchestrating 167 AI agent personas and real-time ATS resume scoring.",
+        ],
+      },
+    ],
+  } : undefined;
+
   return (
     <div className="flex flex-col h-full overflow-auto bg-[#03060f] text-slate-100 font-sans">
       <Topbar
@@ -313,6 +380,7 @@ Senior Full Stack Engineer
       <LiveResumePreviewModal
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
+        resumeData={previewData}
       />
 
       <div className="flex-1 p-6 max-w-6xl mx-auto w-full space-y-6">

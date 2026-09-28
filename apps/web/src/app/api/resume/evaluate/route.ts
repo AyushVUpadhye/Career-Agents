@@ -138,11 +138,11 @@ export async function POST(req: NextRequest) {
     // 1. Analyze Sections
     const lower = text.toLowerCase();
     const sections = {
-      hasExperience: /experience|work history|employment|career background|positions held/i.test(lower),
-      hasEducation: /education|university|college|degree|bachelor|master|phd|academic|certifications?/i.test(lower),
-      hasSkills: /skills|technologies|tech stack|proficient|competencies|expertise|tools|domain knowledge/i.test(lower),
-      hasProjects: /projects?|portfolio|built|developed|achievements|key builds|case studies/i.test(lower),
-      hasSummary: /summary|objective|profile|about|bio|executive summary|overview/i.test(lower),
+      hasExperience: /experience|work history|employment|career background|positions held|work|professional experience/i.test(lower),
+      hasEducation: /education|university|college|degree|bachelor|master|phd|academic|certifications?|school/i.test(lower),
+      hasSkills: /skills|technologies|tech stack|proficient|competencies|expertise|tools|domain knowledge|core competencies|technical skills/i.test(lower),
+      hasProjects: /projects?|portfolio|built|developed|achievements|key builds|case studies|engineering|projects/i.test(lower),
+      hasSummary: /summary|objective|profile|about|bio|executive summary|overview|headline/i.test(lower),
     };
 
     // 2. Weak Bullets Analysis
@@ -180,9 +180,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Role Keywords analysis
-    const foundKeywords = activeRoleKeywords.filter((kw: string) =>
-      new RegExp(`\\b${kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text)
-    );
+    const foundKeywords = activeRoleKeywords.filter((kw: string) => {
+      const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const pattern = new RegExp(`(?<![A-Za-z0-9#+.])${escaped}(?![A-Za-z0-9#+.])`, "i");
+      return pattern.test(text);
+    });
     const missingKeywords = activeRoleKeywords.filter((kw: string) => !foundKeywords.includes(kw));
 
     // 4. Compute Initial ATS Score for Target Role using Keyword Match Ratio
@@ -289,31 +291,30 @@ Return a JSON object matching this structure:
       recommendations.push(`Excellent work for ${targetRoleName}! Keep metrics updated as your career progresses.`);
     }
 
-    const missingSkills = missingKeywords.slice(0, 5).map(s => escapeHTML(s));
+    const missingSkills = missingKeywords.slice(0, 5);
     const analysisId = `analysis-${crypto.randomBytes(3).toString("hex")}`;
 
-    // Clean/escape strings for client response & DB Storage
-    const cleanFileName = escapeHTML(fileName || "resume.pdf");
-    const cleanText = escapeHTML(text);
+    const cleanFileName = fileName || "resume.pdf";
+    const cleanText = text;
     
     const cleanWeakBullets = weakBullets.map((b: any) => ({
-      original: escapeHTML(b.original),
-      issue: escapeHTML(b.issue),
-      suggested: escapeHTML(b.suggested),
+      original: b.original,
+      issue: b.issue,
+      suggested: b.suggested,
     }));
 
     const cleanStarAnalysis = starAnalysis.map((b: any) => ({
-      bullet: escapeHTML(b.bullet),
-      situation: escapeHTML(b.situation),
-      task: escapeHTML(b.task),
-      action: escapeHTML(b.action),
-      result: escapeHTML(b.result),
+      bullet: b.bullet,
+      situation: b.situation,
+      task: b.task,
+      action: b.action,
+      result: b.result,
       rating: typeof b.rating === "number" ? b.rating : 85,
     }));
 
-    const cleanRecommendations = recommendations.map((r: any) => escapeHTML(r));
-    const cleanFoundKeywords = foundKeywords.map((k: any) => escapeHTML(k));
-    const cleanMissingKeywords = missingKeywords.map((k: any) => escapeHTML(k));
+    const cleanRecommendations = recommendations;
+    const cleanFoundKeywords = foundKeywords;
+    const cleanMissingKeywords = missingKeywords;
 
     // 7. Save to PostgreSQL if logged in
     if (session?.user) {
@@ -367,7 +368,7 @@ Return a JSON object matching this structure:
       atsScore,
       targetRole,
       targetRoleName,
-      jobDescription: escapeHTML(jobDescription),
+      jobDescription: jobDescription || "",
       agentId,
       sections,
       weakBullets: cleanWeakBullets,

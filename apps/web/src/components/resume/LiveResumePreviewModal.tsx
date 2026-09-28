@@ -135,6 +135,33 @@ ${data.education?.map((edu) => `### ${edu.degree} — ${edu.school} (${edu.year}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+      <style>{`
+        @media print {
+          body {
+            background: white !important;
+            color: black !important;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          #printable-resume, #printable-resume * {
+            visibility: visible !important;
+          }
+          #printable-resume {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 24px !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: white !important;
+            color: #0f172a !important;
+          }
+        }
+      `}</style>
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
