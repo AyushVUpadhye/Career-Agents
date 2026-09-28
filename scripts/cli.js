@@ -1011,6 +1011,11 @@ async function main() {
   const args = process.argv.slice(2);
   const cmd = args[0];
 
+  if (cmd === 'mcp') {
+    runMCPServer();
+    return;
+  }
+
   if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
     printHelp();
     return;

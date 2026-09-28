@@ -11,10 +11,16 @@ pip install qwen-agent
 ## Usage
 Query Qwen chat models via API or command line tools.
 
-## MCP Protocol Integration
+## MCP Protocol Integration (Qwen Desktop App for Laptop)
 
-To connect Qwen Agent or Qwen CLI directly to the **Career-Agents MCP Server**, add the following configuration to your Qwen client's MCP configuration (`mcp_config.json`):
+Since the Qwen Desktop App GUI strictly requires the `npx` or `uvx` command input method, configure the MCP server in Qwen Desktop App using `npx`:
 
+### Qwen App Configuration
+- **Command:** `npx`
+- **Parameters:** `-y` `career-agents` `mcp`
+- **Environment Variables:** `NODE_ENV=production`
+
+### `mcp_config.json` Format
 ```json
 {
   "mcpServers": {
@@ -33,21 +39,7 @@ To connect Qwen Agent or Qwen CLI directly to the **Career-Agents MCP Server**, 
 }
 ```
 
-For local workspace development:
-
-```json
-{
-  "mcpServers": {
-    "career-agents": {
-      "command": "node",
-      "args": [
-        "d:/CodeMyFYP-Agents/scripts/cli.js",
-        "mcp"
-      ]
-    }
-  }
-}
-```
+> **Tip to prevent timeout:** If Qwen Desktop shows `McpError -32001: Request timed out` on the first launch, run `npx -y career-agents mcp` once in your terminal to warm up your laptop's local `npx` package cache so Qwen connects instantly (< 100ms).
 
 ## Agent Loading
 Export the agent instructions as Prompt Bundle format:

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [18.2.0] - 2026-09-29
+
+### Fixed
+- Re-release the MCP CLI with its current `packages/core/executor.js` runtime path, replacing the broken 1.1.0 package that referenced an unpublished `runtime/executor.js`.
+- Include `skill-taxonomy.json` in the npm tarball so installed MCP tools retain their fuzzy skill matching data.
+- Add a package-level MCP regression test that builds, packs, installs, and starts the installed CLI, then verifies `initialize` and `tools/list` over stdio before publication.
+
 ## [10.0.0] - 2026-07-29
 
 ### Added

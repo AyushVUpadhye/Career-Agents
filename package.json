@@ -1,6 +1,6 @@
 {
   "name": "career-agents",
-  "version": "18.1.0",
+  "version": "18.2.0",
   "description": "The Open Source Career Agents Platform",
   "main": "scripts/sdk.js",
   "type": "module",
@@ -11,7 +11,10 @@
     ".": "./scripts/sdk.js"
   },
   "scripts": {
-    "test": "node ./scripts/cli.js validate",
+    "test": "node ./scripts/cli.js validate && node ./scripts/test-package-mcp.js",
+    "build": "node --check scripts/cli.js && node --check mcp/server.js && node --check packages/core/executor.js && node --check services/readiness.js",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm test",
     "clean": "node scripts/clean-dev.js",
     "dev": "node scripts/dev.js",
     "doctor": "node scripts/doctor.js",
@@ -89,6 +92,7 @@
     "career-agents.json",
     "search-index.json",
     "knowledge-graph.json",
+    "skill-taxonomy.json",
     "llms.txt",
     "README.md",
     "LICENSE"
