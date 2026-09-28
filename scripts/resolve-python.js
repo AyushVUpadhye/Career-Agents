@@ -11,7 +11,7 @@ let resolved;
 export function resolvePython() {
   if (resolved === undefined) {
     resolved = CANDIDATES.find((cmd) => {
-      const res = spawnSync(cmd, ['--version'], { encoding: 'utf8' });
+      const res = spawnSync(cmd, ['--version'], { encoding: 'utf8', shell: true });
       return res.status === 0 && /^Python 3\./.test(`${res.stdout || ''}${res.stderr || ''}`.trim());
     }) || null;
   }

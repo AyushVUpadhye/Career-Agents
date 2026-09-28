@@ -1,5 +1,5 @@
 # MCP Test Report
-Generated: 2026-08-15T22:32:40.217Z
+Generated: 2026-09-28T17:57:32.644Z
 
 ## Test Cases
 
@@ -21,6 +21,8 @@ Generated: 2026-08-15T22:32:40.217Z
 - **[PASS]** Tool: knowledge_graph path traversal 
 - **[PASS]** Tool: knowledge_graph workflows query 
 - **[PASS]** Tool: knowledge_graph companies query 
+- **[PASS]** Tool: knowledge_graph career path for Configuration Management (paths: ["DevOps Engineer"])
+- **[PASS]** Tool: knowledge_graph career path for Prioritization Frameworks (paths: ["Product Manager"])
 - **[PASS]** Resources Listing 
 - **[PASS]** Resources Read 
 - **[PASS]** Error Handling: Invalid Tool Name 
@@ -30,12 +32,21 @@ Generated: 2026-08-15T22:32:40.217Z
 - **[PASS]** Tool: generate_interview_prep_pdf 
 - **[PASS]** Tool: generate_career_roadmap_xlsx 
 - **[PASS]** Tool: search_jobs 
+- **[PASS]** Tool: career_pipeline_track add keeps existing fields ({"company":"Northwind","role":"Platform Engineer","status":"interviewing","appliedDate":"2026-01-15","fitScore":null,"link":"https://example.com/jobs/42","notes":"Referral from former teammate"})
+- **[PASS]** Tool: career_pipeline_track add stores notes ({"company":"Contoso","role":"SRE","status":"applied","appliedDate":"2026-09-28","fitScore":null,"link":"-","notes":"Found via alumni network"})
+- **[PASS]** Tool: career_pipeline_track status updates only the given role ([{"company":"Northwind","role":"Platform Engineer","status":"interviewing","appliedDate":"2026-01-15","fitScore":null,"link":"https://example.com/jobs/42","notes":"Referral from former teammate"},{"company":"Northwind","role":"Data Engineer","status":"offer","appliedDate":"2026-09-28","fitScore":null,"link":"-","notes":"Offer received"}])
 - **[PASS]** Tool: analyze_job_posting 
 - **[PASS]** Tool: analyze_github_profile 
 - **[PASS]** Tool: linkedin_profile_review 
 - **[PASS]** Tool: career_action_plan 
+- **[PASS]** Tool: search_memory (Matches: ats-resume-reviewer, executive-job-search-coach, resume-strategist, executive-resume-advisor, resume-achievement-writer)
+- **[PASS]** Tool: search_knowledge_base (Matches: ats-resume-reviewer, executive-job-search-coach, resume-strategist, executive-resume-advisor, resume-achievement-writer)
+- **[PASS]** Tool: company_dossier 
+- **[PASS]** Tool: company_dossier unknown company fallback 
+- **[PASS]** Tool: interview_plan 
+- **[PASS]** Tool: interview_plan without company 
 
 ## Summary
-- **Total tests**: 31
-- **Passed tests**: 31
+- **Total tests**: 42
+- **Passed tests**: 42
 - **Failed tests**: 0

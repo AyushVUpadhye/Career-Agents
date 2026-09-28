@@ -748,7 +748,7 @@ function runDoctor() {
     console.log(`  [${c.red}x FAIL${c.reset}] Python 3 not found (tried python3, python); cannot run validate.py.`);
     errors++;
   } else if (fs.existsSync(validateScript)) {
-    const result = spawnSync(python, [validateScript]);
+    const result = spawnSync(python, [validateScript], { shell: true });
     if (result.status === 0) {
       console.log(`  [${c.green}✓ PASS${c.reset}] validate.py checks pass.`);
     } else {
@@ -773,7 +773,7 @@ function runUpdate() {
   if (fs.existsSync(genScript) && !python) {
     console.error(`${c.red}Python 3 not found (tried python3, python); cannot run generate-data.py.${c.reset}`);
   } else if (fs.existsSync(genScript)) {
-    const res = spawnSync(python, [genScript], { stdio: 'inherit' });
+    const res = spawnSync(python, [genScript], { stdio: 'inherit', shell: true });
     if (res.status === 0) {
       console.log(`${c.green}System indices and master configuration successfully updated.${c.reset}`);
     } else {

@@ -26,10 +26,16 @@ function findPython() {
 function makeBinDir(python, name) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), `python-resolution-${name}-`));
   if (isWindows) {
-    fs.copyFileSync(python.exe, path.join(dir, `${name}.exe`));
-    const exeDir = path.dirname(python.exe);
-    for (const file of fs.readdirSync(exeDir).filter(f => f.toLowerCase().endsWith('.dll'))) {
-      fs.copyFileSync(path.join(exeDir, file), path.join(dir, file));
+    try {
+      fs.copyFileSync(python.exe, path.join(dir, `${name}.exe`));
+      const exeDir = path.dirname(python.exe);
+      for (const file of fs.readdirSync(exeDir).filter(f => f.toLowerCase().endsWith('.dll'))) {
+        try { fs.copyFileSync(path.join(exeDir, file), path.join(dir, file)); } catch (_) {}
+      }
+    } catch (_) {
+      // Fallback for Windows Store Execution Aliases (EACCES on copyfile)
+      fs.writeFileSync(path.join(dir, `${name}.cmd`), `@echo off\r\n"${python.exe}" %*\r\n`);
+      fs.writeFileSync(path.join(dir, `${name}.bat`), `@echo off\r\n"${python.exe}" %*\r\n`);
     }
   } else {
     fs.symlinkSync(python.exe, path.join(dir, name));
@@ -43,8 +49,17 @@ function envWithPath(dir, python) {
   for (const [key, value] of Object.entries(process.env)) {
     if (key.toLowerCase() !== 'path') env[key] = value;
   }
-  env.PATH = dir;
-  if (isWindows) env.PYTHONHOME = python.prefix;
+  if (isWindows) {
+    const sysRoot = process.env.SystemRoot || 'C:\\Windows';
+    const sys32 = path.join(sysRoot, 'System32');
+    env.PATH = `${dir}${path.delimiter}${sys32}${path.delimiter}${sysRoot}`;
+    env.PYTHONHOME = python.prefix;
+    env.PATHEXT = process.env.PATHEXT || '.COM;.EXE;.BAT;.CMD';
+    env.SystemRoot = sysRoot;
+    env.ComSpec = process.env.ComSpec || path.join(sys32, 'cmd.exe');
+  } else {
+    env.PATH = dir;
+  }
   return env;
 }
 
