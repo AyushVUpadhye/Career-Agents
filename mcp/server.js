@@ -10,6 +10,7 @@ import { ApplicationTracker, ATSScanner, PipelineAnalytics, InterviewCoach } fro
 import githubApi from '../packages/github/api-client.js';
 import { generateStarMatrix } from '../packages/interview/star-generator.js';
 import { generateKeywordHeatmap } from '../packages/resume/heatmap.js';
+import { resolveDataPath } from '../packages/core/data-dir.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -144,23 +145,27 @@ function findShortestPath(graph, startQuery, endQuery) {
   return null;
 }
 
-const LOG_FILE = path.join(root, 'exports', 'logs', 'mcp.log');
-
-// Ensure log folder exists
-fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
+// Logs live in the user data directory, which is created on first write. Logging is
+// best-effort so an unwritable location cannot stop the server from answering requests.
+function appendLogLine(fileName, line) {
+  try {
+    const logFile = resolveDataPath('exports', 'logs', fileName);
+    fs.mkdirSync(path.dirname(logFile), { recursive: true });
+    fs.appendFileSync(logFile, line, 'utf8');
+  } catch (err) {
+    // Ignore log write errors
+  }
+}
 
 function log(msg) {
   const timestamp = new Date().toISOString();
-  fs.appendFileSync(LOG_FILE, `[${timestamp}] ${msg}\n`, 'utf8');
+  appendLogLine('mcp.log', `[${timestamp}] ${msg}\n`);
 }
 
 const fileCache = {};
 let requestCount = 0;
 const RATE_LIMIT_MAX = 200; // max 200 requests per minute
 let lastReset = Date.now();
-
-const AUDIT_LOG_FILE = path.join(root, 'exports', 'logs', 'mcp_audit.log');
-fs.mkdirSync(path.dirname(AUDIT_LOG_FILE), { recursive: true });
 
 function auditLog(method, params, success, errorMsg = '') {
   const timestamp = new Date().toISOString();
@@ -171,11 +176,7 @@ function auditLog(method, params, success, errorMsg = '') {
     success,
     error: errorMsg
   };
-  try {
-    fs.appendFileSync(AUDIT_LOG_FILE, JSON.stringify(entry) + '\n', 'utf8');
-  } catch (err) {
-    // Ignore log write errors
-  }
+  appendLogLine('mcp_audit.log', JSON.stringify(entry) + '\n');
 }
 
 function checkRateLimit() {
@@ -2388,7 +2389,7 @@ async function handleToolsCall(id, params) {
       case 'get_career_memory': {
         let careerProfile = {};
         try {
-          const profilePath = path.join(root, '.career-profile.json');
+          const profilePath = resolveDataPath('.career-profile.json');
           if (fs.existsSync(profilePath)) {
             careerProfile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
           }
@@ -2557,7 +2558,7 @@ async function handleToolsCall(id, params) {
 
       case 'career_pipeline_track': {
         const { action = 'list', company, role, status = 'applied', notes = '' } = toolArgs;
-        const trackerPath = path.join(root, 'pipeline-tracker.md');
+        const trackerPath = resolveDataPath('pipeline-tracker.md');
         const tracker = ApplicationTracker.load(trackerPath);
 
         let result = {};
@@ -2609,7 +2610,7 @@ async function handleToolsCall(id, params) {
       }
 
       case 'career_pipeline_stats': {
-        const trackerPath = path.join(root, 'pipeline-tracker.md');
+        const trackerPath = resolveDataPath('pipeline-tracker.md');
         const tracker = ApplicationTracker.load(trackerPath);
         const stats = PipelineAnalytics.analyzePipeline(tracker.entries);
         sendResult(id, {
