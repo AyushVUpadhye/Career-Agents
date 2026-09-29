@@ -267,7 +267,7 @@ export function startMcpServer() {
         sendError(null, -32001, 'Rate limit exceeded');
         return;
       }
-      log(`Received request raw: ${line}`);
+      log(`Received request (${line.length} bytes)`);
       const request = JSON.parse(line);
       const { jsonrpc, id, method, params } = request;
 
@@ -315,7 +315,7 @@ export function startMcpServer() {
 
 function send(payload) {
   const raw = JSON.stringify(payload);
-  log(`Sending response raw: ${raw}`);
+  log(`Sending response (${raw.length} bytes)`);
   console.log(raw);
 }
 

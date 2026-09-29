@@ -150,7 +150,10 @@ async function testMcpUsesDataDir() {
   assert.strictEqual(toolText(responses.get(2)).success, true);
   assert.deepStrictEqual(toolText(responses.get(3)).entries.map(e => e.company), ['Linear']);
   assert.ok(fs.readFileSync(path.join(dataDir, 'pipeline-tracker.md'), 'utf8').includes('| Linear | Product Engineer |'));
-  console.log('[PASS] MCP tracker data follows CAREER_AGENTS_HOME.');
+  const mcpLog = fs.readFileSync(path.join(dataDir, 'exports', 'logs', 'mcp.log'), 'utf8');
+  assert.ok(mcpLog.includes('Executing tool call: career_pipeline_track'), 'MCP log is written to the data directory');
+  assert.ok(!mcpLog.includes('Product Engineer'), 'MCP log does not record request or response payloads');
+  console.log('[PASS] MCP tracker data and logs follow CAREER_AGENTS_HOME.');
 
   console.log('Testing that MCP still starts when its log directory cannot be created...');
   const blocker = path.join(workDir, 'not-a-directory');
