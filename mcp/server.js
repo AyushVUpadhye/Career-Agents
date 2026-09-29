@@ -2714,9 +2714,9 @@ async function handleToolsCall(id, params) {
     auditLog('tools/call/' + toolName, toolArgs, success, errorMsg);
   } catch (err) {
     success = false;
-    errorMsg = err.message;
     sendError(id, -32603, `Execution error: ${err.message}`);
-    auditLog('tools/call/' + toolName, toolArgs, success, errorMsg);
+    // The message can quote external API responses, so it goes to the client but not into the audit file.
+    auditLog('tools/call/' + toolName, toolArgs, success, 'Execution error');
   }
 }
 

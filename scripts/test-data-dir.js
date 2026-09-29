@@ -144,7 +144,8 @@ async function testMcpUsesDataDir() {
   const responses = await mcpSession(childEnv({ CAREER_AGENTS_HOME: dataDir }), [
     initialize,
     { method: 'tools/call', params: { name: 'career_pipeline_track', arguments: { action: 'add', company: 'Linear', role: 'Product Engineer' } } },
-    { method: 'tools/call', params: { name: 'career_pipeline_track', arguments: { action: 'list' } } }
+    { method: 'tools/call', params: { name: 'career_pipeline_track', arguments: { action: 'list' } } },
+    { method: 'tools/call', params: { name: 'career_pipeline_track', arguments: { action: 'add', company: 'Linear' } } }
   ]);
   assert.strictEqual(responses.get(1).result.serverInfo.name, 'career-agents-mcp');
   assert.strictEqual(toolText(responses.get(2)).success, true);
@@ -153,6 +154,13 @@ async function testMcpUsesDataDir() {
   const mcpLog = fs.readFileSync(path.join(dataDir, 'exports', 'logs', 'mcp.log'), 'utf8');
   assert.ok(mcpLog.includes('Executing tool call: career_pipeline_track'), 'MCP log is written to the data directory');
   assert.ok(!mcpLog.includes('Product Engineer'), 'MCP log does not record request or response payloads');
+  assert.ok(responses.get(4).error.message.includes('Missing company or role'), 'the client still receives the tool error');
+  const audit = fs.readFileSync(path.join(dataDir, 'exports', 'logs', 'mcp_audit.log'), 'utf8').trim().split('\n').map(line => JSON.parse(line));
+  assert.deepStrictEqual(audit.map(e => [e.method, e.success, e.error]), [
+    ['tools/call/career_pipeline_track', true, ''],
+    ['tools/call/career_pipeline_track', true, ''],
+    ['tools/call/career_pipeline_track', false, 'Execution error']
+  ], 'audit log records tool failures without the error text');
   console.log('[PASS] MCP tracker data and logs follow CAREER_AGENTS_HOME.');
 
   console.log('Testing that MCP still starts when its log directory cannot be created...');
