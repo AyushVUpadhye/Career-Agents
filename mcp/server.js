@@ -315,7 +315,8 @@ export function startMcpServer() {
 
 function send(payload) {
   const raw = JSON.stringify(payload);
-  log(`Sending response (${raw.length} bytes)`);
+  // Only the id is logged: results and errors can carry data fetched from external services.
+  log(`Sending ${payload.error ? 'error' : 'result'} for request ${payload.id ?? 'null'}`);
   console.log(raw);
 }
 
