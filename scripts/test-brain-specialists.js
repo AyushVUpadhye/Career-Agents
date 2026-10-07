@@ -24,9 +24,10 @@ try {
 
 const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brain-specialists-'));
 function compile(dir) {
-  for (const name of fs.readdirSync(dir)) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const name = entry.name;
     const file = path.join(dir, name);
-    if (fs.statSync(file).isDirectory()) { compile(file); continue; }
+    if (entry.isDirectory()) { compile(file); continue; }
     if (!/\.(ts|js)$/.test(name) || name.endsWith('.d.ts')) continue;
     const source = fs.readFileSync(file, 'utf8').replace(/import\.meta\.url/g, "require('url').pathToFileURL(__filename).href");
     const { outputText } = ts.transpileModule(source, {
